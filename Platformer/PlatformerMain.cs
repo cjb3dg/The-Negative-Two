@@ -26,6 +26,7 @@ namespace Platformer
         CharacterManager characterManager;
         LevelManager levelManager;
         InversionManager inversionManager;
+        private Screen currentScreen;
         private static SoundEffect song;
         private static SoundEffect song_i;
         private static SoundEffectInstance backSong;
@@ -38,6 +39,7 @@ namespace Platformer
             characterManager = new CharacterManager(levelManager, inversionManager, Content);
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
+            currentScreen.Type = "MenuScreen";
         }
 
         /// <summary>
@@ -65,9 +67,10 @@ namespace Platformer
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
+            // TODO: use this.Content to load your game content here
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            song = Content.Load<SoundEffect>("HawkeTheme");
-            song_i = Content.Load<SoundEffect>("HawkeTheme_i");
+            song = this.Content.Load<SoundEffect>("HawkeTheme");
+            song_i = this.Content.Load<SoundEffect>("HawkeTheme_i");
             backSong = song.CreateInstance();
             backSong_i = song_i.CreateInstance();
             backSong.IsLooped = true;
@@ -77,9 +80,6 @@ namespace Platformer
             backSong_i.Volume = 0;
 
             levelManager.load();
-
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -101,23 +101,27 @@ namespace Platformer
             //set our keyboardstate tracker update can change the gamestate on every cycle
             controls.Update();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
-            //Up, down, left, right affect the coordinates of the sprite
-
-            levelManager.Update(controls, gameTime);
-
-            if (controls.onPress(Keys.Space, Buttons.A))
+            if (currentScreen.Type == "GameScreen")
             {
-                float x = backSong_i.Volume;
-                backSong_i.Volume = backSong.Volume;
-                backSong.Volume = x;
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+                    //Exit();
 
+                    currentScreen.Type = "PauseScreen";
+                }
+
+                levelManager.Update(controls, gameTime);
+
+                if (controls.onPress(Keys.Space, Buttons.A))
+                {
+                    float x = backSong_i.Volume;
+                    backSong_i.Volume = backSong.Volume;
+                    backSong.Volume = x;
+                }
+
+                base.Update(gameTime);
+            } else {
+                //currentScreen.Update(this);
             }
-
-            base.Update(gameTime);
         }
 
         /// <summary>
@@ -127,8 +131,13 @@ namespace Platformer
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            levelManager.Draw(spriteBatch, GraphicsDevice);
-            // TODO: Add your drawing code here
+
+            if (currentScreen.Type == "GameScreen")
+            {
+                levelManager.Draw(spriteBatch, GraphicsDevice);
+            } else {
+                currentScreen.Draw(spriteBatch, GraphicsDevice);
+            }
 
             spriteBatch.End();
 

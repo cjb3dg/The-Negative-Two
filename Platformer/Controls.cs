@@ -22,8 +22,7 @@ namespace Platformer
 			this.kbo = Keyboard.GetState();
 			this.gp = GamePad.GetState(PlayerIndex.One);
 			this.gpo = GamePad.GetState(PlayerIndex.One);
-			Console.WriteLine (Sdl.SDL_JoystickName (0));
-
+            //Console.WriteLine (Sdl.SDL_JoystickName (0));
 		}
 
 		public void Update()
@@ -43,7 +42,7 @@ namespace Platformer
 		public bool onPress(Keys key, Buttons button)
 		{
 			if ((gp.IsButtonDown (button) && gpo.IsButtonUp (button))) {
-				Console.WriteLine (button);
+                //Console.WriteLine (button);
 			}
 			return (kb.IsKeyDown(key) && kbo.IsKeyUp(key)) ||
 				(gp.IsButtonDown(button) && gpo.IsButtonUp(button));
