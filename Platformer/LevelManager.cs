@@ -176,6 +176,22 @@ namespace Platformer
             //}
         }
 
+        public void Shift(int movement)
+        {
+            foreach (Obstacle o in neutralObstacles)
+            {
+                o.setX(o.getX() + movement);
+            }
+            foreach (Obstacle o in whiteObstacles)
+            {
+                o.setX(o.getX() + movement);
+            }
+            foreach (Obstacle o in blackObstacles)
+            {
+                o.setX(o.getX() + movement);
+            }
+        }
+
         public void Update(Controls controls, GameTime gameTime)
         {
             inversionManager.Update(controls);
@@ -203,7 +219,10 @@ namespace Platformer
                 activeObstacles.AddRange(blackObstacles);
             }
 
-            characterManager.Update(controls, gameTime, activeObstacles);
+            int distanceMoved = -1*characterManager.Update(controls, gameTime, activeObstacles);
+
+            Shift(distanceMoved);
+            characterManager.Shift(distanceMoved);
         }
     }
 }

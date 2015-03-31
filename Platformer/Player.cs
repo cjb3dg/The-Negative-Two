@@ -28,6 +28,10 @@ namespace Platformer
         private int cooldown;
         public int maxHP;
         public int curHP;
+        public int maxEnergy;
+        public int curEnergy;
+        public int energyCost;
+        public int energyRecover;
         private int floorHeight = 480;
 
         public Player(int x, int y, int width, int height)
@@ -39,6 +43,10 @@ namespace Platformer
 
             this.maxHP = 1000;
             this.curHP = 1000;
+            this.maxEnergy = 300;
+            this.curEnergy = 300;
+            this.energyCost = 100;
+            this.energyRecover = 1;
             this.cooldown = 0;
 
             floorHeight -= this.spriteHeight;
@@ -100,6 +108,16 @@ namespace Platformer
             curHP = hp;
         }
 
+        public int getEnergy()
+        {
+            return curEnergy;
+        }
+
+        public void setEnergy(int en)
+        {
+            curEnergy = en;
+        }
+
         public int getCooldown()
         {
             return cooldown;
@@ -129,30 +147,52 @@ namespace Platformer
 
         }
 
-        public void Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, InversionManager inv)
         {
-            Move(controls, oList, eList);
+            int retVal = Move(controls, oList, eList);
             Jump(controls, gameTime);
+            Invert(controls, inv);
             if (cooldown > 0)
             {
                 cooldown--;
             }
             CheckDeath();
+            return retVal;
         }
 
         public void CheckDeath()
         {
-            if (curHP <= 0 || spriteY > 450)
+            if (curHP <= 0)
             {
                 alive = false;
             }
         }
-        public void Move(Controls controls, List<Obstacle> oList, List<Enemy> eList)
+
+        public void Invert(Controls controls, InversionManager inv)
+        {
+            if (controls.onPress(Keys.Space, Buttons.A) && curEnergy >= energyCost)
+            {
+                inv.invert();
+                curEnergy -= energyCost;
+            }
+            if (curEnergy < maxEnergy)
+            {
+                curEnergy += energyRecover;
+            }
+            else
+            {
+                curEnergy = maxEnergy;
+            }
+        }
+
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList)
         {
             if (victory == true)
             {
-                return;
+                return 0;
             }
+
+            int oldX = spriteX;
 
             // Sideways Acceleration
             if (controls.onPress(Keys.Right, Buttons.DPadRight))
@@ -191,6 +231,12 @@ namespace Platformer
             // Check up/down collisions, then left/right
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
+
+            int diffX = spriteX - oldX;
+
+            spriteX = oldX;
+
+            return diffX;
 
         }
 

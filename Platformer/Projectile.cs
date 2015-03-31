@@ -36,6 +36,16 @@ namespace Platformer
             checkBounds();
         }
 
+        public void setX(int x)
+        {
+            spriteX = x;
+        }
+
+        public int getX()
+        {
+            return spriteX;
+        }
+
         public void checkBounds()
         {
             if (spriteX > 800 || spriteY > 500)
