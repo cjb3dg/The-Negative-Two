@@ -8,18 +8,14 @@ using System.Text;
 
 namespace Platformer
 {
-    class MenuItem
+    public class MenuItem
     {
         public string Text;
         public string TargetScreen;
+        public bool IsHighlighted = false;
 
-        public Color TextColor { get; set; }
-        public Color BorderColor { get; set; }
-        public Color BackgroundColor { get; set; }
-
-        public Rectangle Area { get; set; }
-        public Vector2 Position { get; set; }
-        public Rectangle Border { get; set; }
+        public float x;
+        public float y;
 
         public MenuItem(string text, string targetScreen)
         {
@@ -27,18 +23,16 @@ namespace Platformer
             this.TargetScreen = targetScreen;
         }
 
-        public void Update(GameTime gameTime) {
-            
-        }
-
-        public void Draw(SpriteBatch sb)
+        public void Draw(SpriteBatch sb, SpriteFont font)
         {
-            //sb.DrawString(font, menuItems[0][0], new Vector2(100, 100), Color.Black);
-        }
-
-        public void Highlight()
-        {
-
+            if (IsHighlighted)
+            {
+                sb.DrawString(font, Text, new Vector2(x, y), Color.White);
+            }
+            else
+            {
+                sb.DrawString(font, Text, new Vector2(x, y), Color.Gray);
+            }
         }
     }
 }

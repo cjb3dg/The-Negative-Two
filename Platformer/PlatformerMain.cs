@@ -26,7 +26,13 @@ namespace Platformer
         CharacterManager characterManager;
         LevelManager levelManager;
         InversionManager inversionManager;
-        private Screen currentScreen;
+
+        private Screen currentMenuScreen;
+        private MenuScreen mainMenuScreen;
+        private MenuScreen pauseMenu;
+
+        private bool IsGameRunning = false;
+
         private static SoundEffect song;
         private static SoundEffect song_i;
         private static SoundEffectInstance backSong;
@@ -39,7 +45,16 @@ namespace Platformer
             characterManager = new CharacterManager(levelManager, inversionManager, Content);
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
-            currentScreen.Type = "MenuScreen";
+
+            mainMenuScreen = new MenuScreen(new List<MenuItem> { 
+                new MenuItem("START GAME", "GameScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "MainMenu");
+            pauseMenu = new MenuScreen(new List<MenuItem> { 
+                new MenuItem("RESUME", "GameScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "PauseMenu");
+            currentMenuScreen = mainMenuScreen;
         }
 
         /// <summary>
@@ -50,14 +65,10 @@ namespace Platformer
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
-
             Joystick.Init();
             Console.WriteLine("Number of joysticks: " + Sdl.SDL_NumJoysticks());
             controls = new Controls();
-
         }
 
         /// <summary>
@@ -78,6 +89,9 @@ namespace Platformer
             backSong.Play();
             backSong_i.Play();
             backSong_i.Volume = 0;
+
+            mainMenuScreen.LoadContent(Content);
+            pauseMenu.LoadContent(Content);
 
             levelManager.load();
         }
@@ -101,26 +115,27 @@ namespace Platformer
             //set our keyboardstate tracker update can change the gamestate on every cycle
             controls.Update();
 
-            if (currentScreen.Type == "GameScreen")
+            if (IsGameRunning)
             {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) {
-                    //Exit();
-
-                    currentScreen.Type = "PauseScreen";
-                }
-
-                levelManager.Update(controls, gameTime);
-
-                if (controls.onPress(Keys.Space, Buttons.A))
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
-                    float x = backSong_i.Volume;
-                    backSong_i.Volume = backSong.Volume;
-                    backSong.Volume = x;
+                    ChangeScreen(pauseMenu.Type);
                 }
+                else
+                {
+                    levelManager.Update(controls, gameTime);
 
-                base.Update(gameTime);
+                    if (controls.onPress(Keys.Space, Buttons.A))
+                    {
+                        float x = backSong_i.Volume;
+                        backSong_i.Volume = backSong.Volume;
+                        backSong.Volume = x;
+                    }
+
+                    base.Update(gameTime);
+                }
             } else {
-                //currentScreen.Update(this);
+                currentMenuScreen.Update(this);
             }
         }
 
@@ -132,16 +147,38 @@ namespace Platformer
         {
             spriteBatch.Begin();
 
-            if (currentScreen.Type == "GameScreen")
+            if (IsGameRunning)
             {
                 levelManager.Draw(spriteBatch, GraphicsDevice);
             } else {
-                currentScreen.Draw(spriteBatch, GraphicsDevice);
+                currentMenuScreen.Draw(spriteBatch, GraphicsDevice);
             }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void ChangeScreen(string targetScreen)
+        {
+            if (targetScreen == "GameScreen")
+            {
+                IsGameRunning = true;
+            }
+            else if (targetScreen == mainMenuScreen.Type)
+            {
+                currentMenuScreen = mainMenuScreen;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == pauseMenu.Type)
+            {
+                currentMenuScreen = pauseMenu;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == "Exit")
+            {
+                Exit();
+            }
         }
     }
 

@@ -8,11 +8,12 @@ using System.Text;
 
 namespace Platformer
 {
-    abstract class Screen
+    public abstract class Screen
     {
         public string Type;
         protected ContentManager content;
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void LoadContent(ContentManager contentManager) { }
+        public virtual void Update(PlatformerMain game) { }
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice) { }
     }
 }
