@@ -73,6 +73,7 @@ namespace Platformer
         }
         public override void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
+            graphicsDevice.Clear(Color.Black);
             for (int i = 0; i < menuItems.Count; i++)
             {
                 menuItems[i].Draw(spriteBatch, font);
