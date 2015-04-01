@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Platformer
 {
-    public class MenuItem
+    class MenuItem
     {
         public string Text;
         public string TargetScreen;

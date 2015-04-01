@@ -38,6 +38,7 @@
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Boss.cs" />
     <Compile Include="CharacterManager.cs" />
+    <Compile Include="Door.cs" />
     <Compile Include="InversionManager.cs" />
     <Compile Include="Invertible.cs" />
     <Compile Include="Controls.cs" />
@@ -74,6 +75,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Butterfly_s_i.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\door.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Goal_i.png">

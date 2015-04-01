@@ -10,7 +10,6 @@ namespace Platformer
 {
     class Player : Invertible
     {
-        private bool moving;
         private bool grounded;
         private int speed;
         private int x_accel;
@@ -44,7 +43,6 @@ namespace Platformer
             floorHeight -= this.spriteHeight;
 
             grounded = false;
-            moving = false;
             pushing = false;
 
             // Movement
@@ -126,12 +124,11 @@ namespace Platformer
                 image = content.Load<Texture2D>("Zero.png");
                 image_i = content.Load<Texture2D>("Zero_i.png");
             }
-
         }
 
-        public void Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList)
+        public void Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, Door door)
         {
-            Move(controls, oList, eList);
+            Move(controls, oList, eList, door);
             Jump(controls, gameTime);
             if (cooldown > 0)
             {
@@ -147,7 +144,7 @@ namespace Platformer
                 alive = false;
             }
         }
-        public void Move(Controls controls, List<Obstacle> oList, List<Enemy> eList)
+        public void Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, Door door)
         {
             if (victory == true)
             {
@@ -191,7 +188,7 @@ namespace Platformer
             // Check up/down collisions, then left/right
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
-
+            checkLevelSuccess(door);
         }
 
         private void checkEnemyCollisions(List<Enemy> eList)
@@ -241,6 +238,15 @@ namespace Platformer
                 return;
             }
             grounded = false;
+        }
+
+        public void checkLevelSuccess(Door door)
+        {
+            if (!(spriteX + spriteWidth < door.getX() || spriteX > door.getX() + door.getWidth() ||
+                spriteY + spriteHeight < door.getY() || spriteY > door.getY() + door.getHeight()))
+            {
+                victory = true;
+            }
         }
 
         public bool Shoot(Controls controls)

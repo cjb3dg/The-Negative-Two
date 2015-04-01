@@ -30,6 +30,7 @@ namespace Platformer
         private Screen currentMenuScreen;
         private MenuScreen mainMenuScreen;
         private MenuScreen pauseMenu;
+        private MenuScreen victoryMenu;
 
         private bool IsGameRunning = false;
 
@@ -54,6 +55,10 @@ namespace Platformer
                 new MenuItem("RESUME", "GameScreen"),
                 new MenuItem("EXIT", "Exit")
             }, "PauseMenu");
+            victoryMenu = new MenuScreen(new List<MenuItem> { 
+                new MenuItem("NEXT LEVEL", "NextLevelScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "VictoryMenu");
             currentMenuScreen = mainMenuScreen;
         }
 
@@ -92,6 +97,7 @@ namespace Platformer
 
             mainMenuScreen.LoadContent(Content);
             pauseMenu.LoadContent(Content);
+            victoryMenu.LoadContent(Content);
 
             levelManager.load();
         }
@@ -115,7 +121,12 @@ namespace Platformer
             //set our keyboardstate tracker update can change the gamestate on every cycle
             controls.Update();
 
-            if (IsGameRunning)
+            if (characterManager.player.victory)
+            {
+                ChangeScreen(victoryMenu.Type);
+                characterManager.player.victory = false;
+            }
+            else if (IsGameRunning)
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
@@ -175,7 +186,12 @@ namespace Platformer
                 currentMenuScreen = pauseMenu;
                 IsGameRunning = false;
             }
-            else if (targetScreen == "Exit")
+            else if (targetScreen == victoryMenu.Type)
+            {
+                currentMenuScreen = victoryMenu;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == "Exit" || targetScreen == "NextLevelScreen") // TODO: next level stuff
             {
                 Exit();
             }

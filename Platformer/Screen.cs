@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Platformer
 {
-    public abstract class Screen
+    abstract class Screen
     {
         public string Type;
         protected ContentManager content;

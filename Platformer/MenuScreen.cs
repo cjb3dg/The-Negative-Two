@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Platformer
 {
-    public class MenuScreen : Screen
+    class MenuScreen : Screen
     {
         private SpriteFont font;
         private List<MenuItem> menuItems;

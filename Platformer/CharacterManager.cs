@@ -15,12 +15,12 @@ namespace Platformer
 {
     class CharacterManager
     {
-        ContentManager content;
+        public ContentManager content;
         public List<Enemy> enemyList;
-        List<Projectile> projectileList;
-        Player player;
-        LevelManager lvlManager;
-        InversionManager invManager;
+        public List<Projectile> projectileList;
+        public Player player;
+        public LevelManager lvlManager;
+        public InversionManager invManager;
 
         public CharacterManager(LevelManager lvl, InversionManager inv, ContentManager cont)
         {
@@ -144,9 +144,10 @@ namespace Platformer
 
         }
 
-        public void Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList)
+        public void Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, Door door)
         {
-            player.Update(controls, gametime, oList, enemyList);
+            player.Update(controls, gametime, oList, enemyList, door);
+
             foreach (Enemy e in enemyList)
             {
                 e.Update(gametime, oList);
@@ -170,8 +171,6 @@ namespace Platformer
                 }
                 projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0));
             }
-
-            //update levelmanager and inversion manager
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -187,10 +186,6 @@ namespace Platformer
             if (player.isAlive())
             {
                 player.Draw(spriteBatch);
-            }
-            if (player.victory == true)
-            {
-                spriteBatch.Draw(content.Load<Texture2D>("Victory"), new Rectangle(50, 50, 700, 400), Color.White);
             }
         }
 
