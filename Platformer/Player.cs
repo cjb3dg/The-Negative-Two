@@ -147,9 +147,9 @@ namespace Platformer
 
         }
 
-        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, InversionManager inv)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, InversionManager inv, bool cameraStill)
         {
-            int retVal = Move(controls, oList, eList);
+            int retVal = Move(controls, oList, eList, cameraStill);
             Jump(controls, gameTime);
             Invert(controls, inv);
             if (cooldown > 0)
@@ -185,7 +185,7 @@ namespace Platformer
             }
         }
 
-        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList)
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, bool cameraStill)
         {
             if (victory == true)
             {
@@ -234,7 +234,10 @@ namespace Platformer
 
             int diffX = spriteX - oldX;
 
-            spriteX = oldX;
+            if (!cameraStill)
+            {
+                spriteX = oldX;
+            }
 
             return diffX;
 

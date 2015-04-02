@@ -156,7 +156,7 @@ namespace Platformer
             }
         }
 
-        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList)
+        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, bool cameraStill)
         {
             foreach (Enemy e in enemyList)
             {
@@ -169,16 +169,16 @@ namespace Platformer
             projectileList.RemoveAll(p => !p.isAlive());
             enemyList.RemoveAll(e => !e.isAlive());
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, invManager);
+            int retVal = player.Update(controls, gametime, oList, enemyList, invManager, cameraStill);
 
             if (player.Shoot(controls))
             {
-                double projectileXVel = 3;
+                double projectileXVel = 4;
                 int projectileX = player.getWidth() - 2;
                 int projectileY = 18;
                 if (!player.facingRight())
                 {
-                    projectileXVel = -3;
+                    projectileXVel = -4;
                     projectileX = 2;
                 }
                 projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0));

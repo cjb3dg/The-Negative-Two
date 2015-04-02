@@ -24,6 +24,8 @@ namespace Platformer
 
         public List<Boss> bosses { get; set; }
 
+        private bool cameraStill;
+
         public LevelManager(InversionManager inversionManager, CharacterManager characterManager, ContentManager contentManager)
         {
             this.inversionManager = inversionManager;
@@ -35,6 +37,8 @@ namespace Platformer
             blackObstacles = new List<Obstacle>();
 
             bosses = new List<Boss>();
+
+            this.cameraStill = false;
 
             //objects = new List<Sprite>();
         }
@@ -133,6 +137,16 @@ namespace Platformer
             //}
         }
 
+        public void CameraFollow()
+        {
+            this.cameraStill = false;
+        }
+
+        public void CameraStill()
+        {
+            this.cameraStill = true;
+        }
+
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
             inversionManager.Draw(sb, graphicsDevice);
@@ -219,10 +233,13 @@ namespace Platformer
                 activeObstacles.AddRange(blackObstacles);
             }
 
-            int distanceMoved = -1*characterManager.Update(controls, gameTime, activeObstacles);
+            int distanceMoved = -1*characterManager.Update(controls, gameTime, activeObstacles, cameraStill);
 
-            Shift(distanceMoved);
-            characterManager.Shift(distanceMoved);
+            if (!cameraStill)
+            {
+                Shift(distanceMoved);
+                characterManager.Shift(distanceMoved);
+            }
         }
     }
 }

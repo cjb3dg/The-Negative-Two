@@ -48,7 +48,7 @@ namespace Platformer
 
         public void checkBounds()
         {
-            if (spriteX > 800 || spriteY > 500)
+            if (spriteX > 800 || spriteY > 500 || spriteX < 0)
             {
                 alive = false;
             }
