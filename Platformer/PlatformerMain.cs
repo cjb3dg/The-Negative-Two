@@ -26,6 +26,14 @@ namespace Platformer
         CharacterManager characterManager;
         LevelManager levelManager;
         InversionManager inversionManager;
+
+        private Screen currentMenuScreen;
+        private MenuScreen mainMenuScreen;
+        private MenuScreen pauseMenu;
+        private MenuScreen victoryMenu;
+
+        private bool IsGameRunning = false;
+
         private static SoundEffect song;
         private static SoundEffect song_i;
         private static SoundEffectInstance backSong;
@@ -38,6 +46,20 @@ namespace Platformer
             characterManager = new CharacterManager(levelManager, inversionManager, Content);
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
+
+            mainMenuScreen = new MenuScreen(new List<MenuItem> { 
+                new MenuItem("START GAME", "GameScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "MainMenu");
+            pauseMenu = new MenuScreen(new List<MenuItem> { 
+                new MenuItem("RESUME", "GameScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "PauseMenu");
+            victoryMenu = new MenuScreen(new List<MenuItem> { 
+                new MenuItem("NEXT LEVEL", "NextLevelScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "VictoryMenu");
+            currentMenuScreen = mainMenuScreen;
         }
 
         /// <summary>
@@ -48,14 +70,10 @@ namespace Platformer
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
-
             Joystick.Init();
             Console.WriteLine("Number of joysticks: " + Sdl.SDL_NumJoysticks());
             controls = new Controls();
-
         }
 
         /// <summary>
@@ -65,9 +83,10 @@ namespace Platformer
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
+            // TODO: use this.Content to load your game content here
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            song = Content.Load<SoundEffect>("HawkeTheme");
-            song_i = Content.Load<SoundEffect>("HawkeTheme_i");
+            song = this.Content.Load<SoundEffect>("HawkeTheme");
+            song_i = this.Content.Load<SoundEffect>("HawkeTheme_i");
             backSong = song.CreateInstance();
             backSong_i = song_i.CreateInstance();
             backSong.IsLooped = true;
@@ -76,10 +95,11 @@ namespace Platformer
             backSong_i.Play();
             backSong_i.Volume = 0;
 
+            mainMenuScreen.LoadContent(Content);
+            pauseMenu.LoadContent(Content);
+            victoryMenu.LoadContent(Content);
+
             levelManager.load();
-
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -101,23 +121,33 @@ namespace Platformer
             //set our keyboardstate tracker update can change the gamestate on every cycle
             controls.Update();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
-            //Up, down, left, right affect the coordinates of the sprite
-
-            levelManager.Update(controls, gameTime);
-
-            if (controls.onPress(Keys.Space, Buttons.A))
+            if (characterManager.player.victory)
             {
-                float x = backSong_i.Volume;
-                backSong_i.Volume = backSong.Volume;
-                backSong.Volume = x;
-
+                ChangeScreen(victoryMenu.Type);
+                characterManager.player.victory = false;
             }
+            else if (IsGameRunning)
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                {
+                    ChangeScreen(pauseMenu.Type);
+                }
+                else
+                {
+                    levelManager.Update(controls, gameTime);
 
-            base.Update(gameTime);
+                    if (controls.onPress(Keys.Space, Buttons.A))
+                    {
+                        float x = backSong_i.Volume;
+                        backSong_i.Volume = backSong.Volume;
+                        backSong.Volume = x;
+                    }
+
+                    base.Update(gameTime);
+                }
+            } else {
+                currentMenuScreen.Update(this);
+            }
         }
 
         /// <summary>
@@ -127,12 +157,44 @@ namespace Platformer
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            levelManager.Draw(spriteBatch, GraphicsDevice);
-            // TODO: Add your drawing code here
+
+            if (IsGameRunning)
+            {
+                levelManager.Draw(spriteBatch, GraphicsDevice);
+            } else {
+                currentMenuScreen.Draw(spriteBatch, GraphicsDevice);
+            }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void ChangeScreen(string targetScreen)
+        {
+            if (targetScreen == "GameScreen")
+            {
+                IsGameRunning = true;
+            }
+            else if (targetScreen == mainMenuScreen.Type)
+            {
+                currentMenuScreen = mainMenuScreen;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == pauseMenu.Type)
+            {
+                currentMenuScreen = pauseMenu;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == victoryMenu.Type)
+            {
+                currentMenuScreen = victoryMenu;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == "Exit" || targetScreen == "NextLevelScreen") // TODO: next level stuff
+            {
+                Exit();
+            }
         }
     }
 

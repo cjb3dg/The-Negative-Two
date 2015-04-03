@@ -14,8 +14,6 @@ namespace Platformer
         private CharacterManager characterManager;
         private ContentManager contentManager;
 
-        //public List<Sprite> objects { get; private set; } /* all objects in level */
-
         public List<Item> items { get; set; } /* TODO */
 
         public List<Obstacle> neutralObstacles { get; set; }
@@ -24,6 +22,7 @@ namespace Platformer
 
         public List<Boss> bosses { get; set; }
 
+        public Door door;
         private int cameraX;
         private bool cameraStill;
 
@@ -38,11 +37,8 @@ namespace Platformer
             blackObstacles = new List<Obstacle>();
 
             bosses = new List<Boss>();
-
             this.cameraStill = false;
             this.cameraX = 0;
-
-            //objects = new List<Sprite>();
         }
 
         public void load()
@@ -50,6 +46,10 @@ namespace Platformer
             Texture2D platformGrey = contentManager.Load<Texture2D>("Platform_grey");
             Texture2D platformBlack = contentManager.Load<Texture2D>("Platform_black");
             Texture2D platformWhite = contentManager.Load<Texture2D>("Platform_white");
+            Texture2D doorTex = contentManager.Load<Texture2D>("Door");
+
+            door = new Door(750, 430, 30, 56, doorTex, doorTex);
+            door.setNeutral();
 
             Obstacle neutralObstacle = new Obstacle(123, 284, 50, 50, platformGrey, platformGrey);
             Obstacle neutralObstacle2 = new Obstacle(250, 332, 50, 50, platformGrey, platformGrey);
@@ -69,9 +69,6 @@ namespace Platformer
             Obstacle whiteObstacle2 = new Obstacle(513, 182, 50, 50, platformWhite, platformWhite);
             Obstacle whiteObstacle3 = new Obstacle(512, 373, 50, 50, platformWhite, platformWhite);
 
-            //Texture2D goal = contentManager.Load<Texture2D>("Goal");
-            //Texture2D goal_i = contentManager.Load<Texture2D>("Goal_i");
-
             addObject(neutralObstacle);
             addObject(neutralObstacle2);
             addObject(neutralObstacle3);
@@ -81,6 +78,7 @@ namespace Platformer
             addObject(blackObstacle);
             addObject(blackObstacle2);
             addObject(blackObstacle3);
+            addObject(door);
 
             characterManager.Load();
 
@@ -151,6 +149,7 @@ namespace Platformer
 
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
+            door.Draw(sb, cameraX);
             inversionManager.Draw(sb, graphicsDevice);
             characterManager.Draw(sb, cameraX);
 
@@ -173,23 +172,6 @@ namespace Platformer
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
-
-
-            //for (int i = 0; i < obstacles.Count; i++)
-            //{
-            //    Sprite obstacle = obstacles[i];
-            //    if (obstacle is Invertible)
-            //    {
-            //        if (((Invertible)obstacle).IsInverted != inversionManager.IsWorldInverted || ((Invertible) obstacle).IsNeutral)
-            //        {
-            //            obstacle.Draw(sb);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        obstacles[i].Draw(sb);
-            //    }
-            //}
         }
 
         public void MoveCamera(int movement)
@@ -224,7 +206,7 @@ namespace Platformer
                 activeObstacles.AddRange(blackObstacles);
             }
 
-            int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, cameraStill, cameraX);
+            int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, door, cameraStill, cameraX);
 
             if (!cameraStill)
             {

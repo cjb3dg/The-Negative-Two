@@ -15,12 +15,12 @@ namespace Platformer
 {
     class CharacterManager
     {
-        ContentManager content;
+        public ContentManager content;
         public List<Enemy> enemyList;
-        List<Projectile> projectileList;
-        Player player;
-        LevelManager lvlManager;
-        InversionManager invManager;
+        public List<Projectile> projectileList;
+        public Player player;
+        public LevelManager lvlManager;
+        public InversionManager invManager;
 
         public CharacterManager(LevelManager lvl, InversionManager inv, ContentManager cont)
         {
@@ -144,7 +144,7 @@ namespace Platformer
 
         }
 
-        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, bool cameraStill, int cameraX)
+        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, Door door, bool cameraStill, int cameraX)
         {
             foreach (Enemy e in enemyList)
             {
@@ -157,7 +157,7 @@ namespace Platformer
             projectileList.RemoveAll(p => !p.isAlive());
             enemyList.RemoveAll(e => !e.isAlive());
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, invManager, cameraStill);
+            int retVal = player.Update(controls, gametime, oList, enemyList, invManager, door, cameraStill);
 
             if (player.Shoot(controls))
             {
@@ -171,10 +171,7 @@ namespace Platformer
                 }
                 projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0));
             }
-
             return retVal;
-
-            //update levelmanager and inversion manager
         }
 
         public void DrawHPAndEnergy(SpriteBatch spriteBatch)
@@ -225,7 +222,9 @@ namespace Platformer
             {
                 player.Draw(spriteBatch, cameraX);
             }
+
             DrawHPAndEnergy(spriteBatch);
+
             if (player.victory == true)
             {
                 spriteBatch.Draw(content.Load<Texture2D>("Victory"), new Rectangle(50, 50, 700, 400), Color.White);

@@ -13,7 +13,6 @@ namespace Platformer
 		protected int spriteX, spriteY;
 		protected int spriteWidth, spriteHeight;
 		protected Texture2D image;
-        protected bool ofInverseWorld;
 
 		public Sprite()
 		{
