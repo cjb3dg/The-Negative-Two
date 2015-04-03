@@ -27,18 +27,28 @@ namespace Platformer
             this.alive = true;
         }
 
-        public void Update(List<Obstacle> oList, ref List<Enemy> eList)
+        public void Update(List<Obstacle> oList, ref List<Enemy> eList, int cameraX)
         {
             spriteX += (int)x_vel;
             spriteY += (int)y_vel;
             checkObstacleCollisions(oList);
             checkEnemyCollisions(ref eList);
-            checkBounds();
+            checkBounds(cameraX);
         }
 
-        public void checkBounds()
+        public void setX(int x)
         {
-            if (spriteX > 800 || spriteY > 500)
+            spriteX = x;
+        }
+
+        public int getX()
+        {
+            return spriteX;
+        }
+
+        public void checkBounds(int cameraX)
+        {
+            if (spriteX > 800 + cameraX || spriteY > 500 || spriteX < cameraX)
             {
                 alive = false;
             }
