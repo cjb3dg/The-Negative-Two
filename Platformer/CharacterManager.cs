@@ -144,19 +144,7 @@ namespace Platformer
 
         }
 
-        public void Shift(int movement)
-        {
-            foreach (Enemy e in enemyList)
-            {
-                e.setX(e.getX() + movement);
-            }
-            foreach (Projectile p in projectileList)
-            {
-                p.setX(p.getX() + movement);
-            }
-        }
-
-        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, bool cameraStill)
+        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, bool cameraStill, int cameraX)
         {
             foreach (Enemy e in enemyList)
             {
@@ -164,7 +152,7 @@ namespace Platformer
             }
             foreach (Projectile p in projectileList)
             {
-                p.Update(oList, ref enemyList);
+                p.Update(oList, ref enemyList, cameraX);
             }
             projectileList.RemoveAll(p => !p.isAlive());
             enemyList.RemoveAll(e => !e.isAlive());
@@ -223,19 +211,19 @@ namespace Platformer
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, int cameraX)
         {
             foreach (Projectile p in projectileList)
             {
-                p.Draw(spriteBatch);
+                p.Draw(spriteBatch, cameraX);
             }
             foreach (Enemy e in enemyList)
             {
-                e.Draw(spriteBatch);
+                e.Draw(spriteBatch, cameraX);
             }
             if (player.isAlive())
             {
-                player.Draw(spriteBatch);
+                player.Draw(spriteBatch, cameraX);
             }
             DrawHPAndEnergy(spriteBatch);
             if (player.victory == true)

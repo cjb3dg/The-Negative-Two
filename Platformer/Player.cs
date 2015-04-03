@@ -232,13 +232,11 @@ namespace Platformer
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
 
-            int diffX = spriteX - oldX;
-
-            if (!cameraStill)
+            if (cameraStill)
             {
-                spriteX = oldX;
+                return 0;
             }
-
+            int diffX = spriteX - oldX;
             return diffX;
 
         }
@@ -318,28 +316,28 @@ namespace Platformer
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, int cameraX)
         {
             if (right)
             {
                 if (!IsInverted)
                 {
-                    spriteBatch.Draw(image, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
                 }
                 else
                 {
-                    spriteBatch.Draw(image_i, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
                 }
             }
             else
             {
                 if (!IsInverted)
                 {
-                    spriteBatch.Draw(image, null, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
                 }
                 else
                 {
-                    spriteBatch.Draw(image_i, null, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
                 }
             }
         }
