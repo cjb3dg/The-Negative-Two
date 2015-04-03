@@ -24,7 +24,7 @@ namespace Platformer
 
         public CharacterManager(LevelManager lvl, InversionManager inv, ContentManager cont)
         {
-            player = new Player(25, 400, 50, 50);
+            player = new Player(400, 400, 50, 50);
             enemyList = new List<Enemy>();
             projectileList = new List<Projectile>();
             lvlManager = lvl;
@@ -144,48 +144,90 @@ namespace Platformer
 
         }
 
-        public void Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, Door door)
+        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, Door door, bool cameraStill, int cameraX)
         {
-            player.Update(controls, gametime, oList, enemyList, door);
-
             foreach (Enemy e in enemyList)
             {
                 e.Update(gametime, oList);
             }
             foreach (Projectile p in projectileList)
             {
-                p.Update(oList, ref enemyList);
+                p.Update(oList, ref enemyList, cameraX);
             }
             projectileList.RemoveAll(p => !p.isAlive());
             enemyList.RemoveAll(e => !e.isAlive());
 
+            int retVal = player.Update(controls, gametime, oList, enemyList, invManager, door, cameraStill);
+
             if (player.Shoot(controls))
             {
-                double projectileXVel = 3;
+                double projectileXVel = 4;
                 int projectileX = player.getWidth() - 2;
                 int projectileY = 18;
                 if (!player.facingRight())
                 {
-                    projectileXVel = -3;
+                    projectileXVel = -4;
                     projectileX = 2;
                 }
                 projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0));
             }
+            return retVal;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void DrawHPAndEnergy(SpriteBatch spriteBatch)
+        {
+            Texture2D temp = content.Load<Texture2D>("Platform_grey");
+            spriteBatch.Draw(temp, new Rectangle(10, 10, player.maxHP / 10, 15), Color.Red);
+            spriteBatch.Draw(temp, new Rectangle(10, 10, player.getHP() / 10, 15), Color.Green);
+            spriteBatch.Draw(temp, new Rectangle(10, 30, player.maxEnergy / 10, 15), Color.Gray);
+            spriteBatch.Draw(temp, new Rectangle(45, 30, player.maxEnergy / 10, 15), Color.Gray);
+            spriteBatch.Draw(temp, new Rectangle(80, 30, player.maxEnergy / 10, 15), Color.Gray);
+            if (player.getEnergy() >= 100)
+            {
+                spriteBatch.Draw(temp, new Rectangle(10, 30, 30, 15), Color.Yellow);
+            }
+            else
+            {
+                spriteBatch.Draw(temp, new Rectangle(10, 30, (player.getEnergy() * 3) / 10, 15), Color.Yellow);
+            }
+            if (player.getEnergy() >= 200)
+            {
+                spriteBatch.Draw(temp, new Rectangle(45, 30, 30, 15), Color.Yellow);
+            }
+            else if (player.getEnergy() > 100)
+            {
+                spriteBatch.Draw(temp, new Rectangle(45, 30, ((player.getEnergy() - 100) * 3) / 10, 15), Color.Yellow);
+            }
+            if (player.getEnergy() >= 300)
+            {
+                spriteBatch.Draw(temp, new Rectangle(80, 30, 30, 15), Color.Yellow);
+            }
+            else if (player.getEnergy() > 200)
+            {
+                spriteBatch.Draw(temp, new Rectangle(80, 30, ((player.getEnergy() - 200) * 3) / 10, 15), Color.Yellow);
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, int cameraX)
         {
             foreach (Projectile p in projectileList)
             {
-                p.Draw(spriteBatch);
+                p.Draw(spriteBatch, cameraX);
             }
             foreach (Enemy e in enemyList)
             {
-                e.Draw(spriteBatch);
+                e.Draw(spriteBatch, cameraX);
             }
             if (player.isAlive())
             {
-                player.Draw(spriteBatch);
+                player.Draw(spriteBatch, cameraX);
+            }
+
+            DrawHPAndEnergy(spriteBatch);
+
+            if (player.victory == true)
+            {
+                spriteBatch.Draw(content.Load<Texture2D>("Victory"), new Rectangle(50, 50, 700, 400), Color.White);
             }
         }
 

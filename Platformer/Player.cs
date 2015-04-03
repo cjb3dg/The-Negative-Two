@@ -27,6 +27,10 @@ namespace Platformer
         private int cooldown;
         public int maxHP;
         public int curHP;
+        public int maxEnergy;
+        public int curEnergy;
+        public int energyCost;
+        public int energyRecover;
         private int floorHeight = 480;
 
         public Player(int x, int y, int width, int height)
@@ -38,6 +42,10 @@ namespace Platformer
 
             this.maxHP = 1000;
             this.curHP = 1000;
+            this.maxEnergy = 300;
+            this.curEnergy = 300;
+            this.energyCost = 100;
+            this.energyRecover = 1;
             this.cooldown = 0;
 
             floorHeight -= this.spriteHeight;
@@ -98,6 +106,16 @@ namespace Platformer
             curHP = hp;
         }
 
+        public int getEnergy()
+        {
+            return curEnergy;
+        }
+
+        public void setEnergy(int en)
+        {
+            curEnergy = en;
+        }
+
         public int getCooldown()
         {
             return cooldown;
@@ -126,30 +144,47 @@ namespace Platformer
             }
         }
 
-        public void Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, Door door)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, InversionManager inv, Door door, bool cameraStill)
         {
-            Move(controls, oList, eList, door);
+            int retVal = Move(controls, oList, eList, door, cameraStill);
             Jump(controls, gameTime);
+            Invert(controls, inv);
             if (cooldown > 0)
             {
                 cooldown--;
             }
             CheckDeath();
+            return retVal;
         }
 
         public void CheckDeath()
         {
-            if (curHP <= 0 || spriteY > 450)
+            if (curHP <= 0)
             {
                 alive = false;
             }
         }
-        public void Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, Door door)
+
+        public void Invert(Controls controls, InversionManager inv)
         {
-            if (victory == true)
+            if (controls.onPress(Keys.Space, Buttons.A) && curEnergy >= energyCost)
             {
-                return;
+                inv.invert();
+                curEnergy -= energyCost;
             }
+            if (curEnergy < maxEnergy)
+            {
+                curEnergy += energyRecover;
+            }
+            else
+            {
+                curEnergy = maxEnergy;
+            }
+        }
+
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, Door door, bool cameraStill)
+        {
+            int oldX = spriteX;
 
             // Sideways Acceleration
             if (controls.onPress(Keys.Right, Buttons.DPadRight))
@@ -189,6 +224,13 @@ namespace Platformer
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
             checkLevelSuccess(door);
+
+            if (cameraStill)
+            {
+                return 0;
+            }
+            int diffX = spriteX - oldX;
+            return diffX;
         }
 
         private void checkEnemyCollisions(List<Enemy> eList)
@@ -275,28 +317,28 @@ namespace Platformer
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, int cameraX)
         {
             if (right)
             {
                 if (!IsInverted)
                 {
-                    spriteBatch.Draw(image, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
                 }
                 else
                 {
-                    spriteBatch.Draw(image_i, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
                 }
             }
             else
             {
                 if (!IsInverted)
                 {
-                    spriteBatch.Draw(image, null, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
                 }
                 else
                 {
-                    spriteBatch.Draw(image_i, null, new Rectangle(spriteX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
                 }
             }
         }

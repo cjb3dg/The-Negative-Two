@@ -53,10 +53,7 @@ namespace Platformer
 
         public void Update(Controls controls)
         {
-            if (controls.onPress(Keys.Space, Buttons.A))
-            {
-                invert();
-            }
+            
         }
     }
 }

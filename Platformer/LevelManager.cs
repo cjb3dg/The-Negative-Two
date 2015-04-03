@@ -23,6 +23,8 @@ namespace Platformer
         public List<Boss> bosses { get; set; }
 
         public Door door;
+        private int cameraX;
+        private bool cameraStill;
 
         public LevelManager(InversionManager inversionManager, CharacterManager characterManager, ContentManager contentManager)
         {
@@ -35,6 +37,8 @@ namespace Platformer
             blackObstacles = new List<Obstacle>();
 
             bosses = new List<Boss>();
+            this.cameraStill = false;
+            this.cameraX = 0;
         }
 
         public void load()
@@ -133,31 +137,46 @@ namespace Platformer
             //}
         }
 
+        public void CameraFollow()
+        {
+            this.cameraStill = false;
+        }
+
+        public void CameraStill()
+        {
+            this.cameraStill = true;
+        }
+
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
-            door.Draw(sb);
+            door.Draw(sb, cameraX);
             inversionManager.Draw(sb, graphicsDevice);
-            characterManager.Draw(sb);
+            characterManager.Draw(sb, cameraX);
 
             for (int i = 0; i < neutralObstacles.Count; i++)
             {
-                neutralObstacles[i].Draw(sb);
+                neutralObstacles[i].Draw(sb, cameraX);
             }
 
             if (inversionManager.IsWorldInverted)
             {
                 for (int i = 0; i < whiteObstacles.Count; i++)
                 {
-                    whiteObstacles[i].Draw(sb);
+                    whiteObstacles[i].Draw(sb, cameraX);
                 }
             }
             else
             {
                 for (int i = 0; i < blackObstacles.Count; i++)
                 {
-                    blackObstacles[i].Draw(sb);
+                    blackObstacles[i].Draw(sb, cameraX);
                 }
             }
+        }
+
+        public void MoveCamera(int movement)
+        {
+            cameraX += movement;
         }
 
         public void Update(Controls controls, GameTime gameTime)
@@ -187,7 +206,12 @@ namespace Platformer
                 activeObstacles.AddRange(blackObstacles);
             }
 
-            characterManager.Update(controls, gameTime, activeObstacles, door);
+            int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, door, cameraStill, cameraX);
+
+            if (!cameraStill)
+            {
+                MoveCamera(distanceMoved);
+            }
         }
     }
 }
