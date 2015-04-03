@@ -146,7 +146,7 @@ namespace The_Negative_One
                     base.Update(gameTime);
                 }
             } else {
-                currentMenuScreen.Update(this);
+                currentMenuScreen.Update(this, controls);
             }
         }
 

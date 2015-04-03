@@ -37,9 +37,9 @@ namespace The_Negative_One
             font = contentManager.Load<SpriteFont>("MenuFont");
         }
 
-        public override void Update(GameMain game) {
+        public override void Update(GameMain game, Controls controls) {
             // if down key, go down in array
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            if (controls.onPress(Keys.Down, Buttons.LeftThumbstickDown))
             {
                 if (selectedIndex < menuItems.Count - 1)
                 {
@@ -49,7 +49,8 @@ namespace The_Negative_One
                 }
             }
             // if up key, go up in array
-            else if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
+            else if (controls.onPress(Keys.Up, Buttons.LeftThumbstickUp))
+            {
                 if (selectedIndex > 0)
                 {
                     selectedIndex -= 1;
@@ -58,7 +59,7 @@ namespace The_Negative_One
                 }
             }
             // if enter key, enter target screen
-            else if (Keyboard.GetState().IsKeyDown(Keys.Enter)) {
+            else if (controls.onPress(Keys.Enter, Buttons.A)) {
                 game.ChangeScreen(menuItems[selectedIndex].TargetScreen);
             }
 

@@ -167,7 +167,7 @@ namespace The_Negative_One
 
         public void Invert(Controls controls, InversionManager inv)
         {
-            if (controls.onPress(Keys.Space, Buttons.A) && curEnergy >= energyCost)
+            if (controls.onPress(Keys.Space, Buttons.LeftTrigger) && curEnergy >= energyCost)
             {
                 inv.invert();
                 curEnergy -= energyCost;
@@ -187,19 +187,19 @@ namespace The_Negative_One
             int oldX = spriteX;
 
             // Sideways Acceleration
-            if (controls.onPress(Keys.Right, Buttons.DPadRight))
+            if (controls.onPress(Keys.Right, Buttons.LeftThumbstickRight))
             {
                 x_accel += speed;
                 right = true;
             }
-            else if (controls.onRelease(Keys.Right, Buttons.DPadRight))
+            else if (controls.onRelease(Keys.Right, Buttons.LeftThumbstickRight))
                 x_accel -= speed;
-            if (controls.onPress(Keys.Left, Buttons.DPadLeft))
+            if (controls.onPress(Keys.Left, Buttons.LeftThumbstickLeft))
             {
                 x_accel -= speed;
                 right = false;
             }
-            else if (controls.onRelease(Keys.Left, Buttons.DPadLeft))
+            else if (controls.onRelease(Keys.Left, Buttons.LeftThumbstickLeft))
                 x_accel += speed;
 
             double playerFriction = pushing ? (friction * 3) : friction;
@@ -316,7 +316,7 @@ namespace The_Negative_One
         private void Jump(Controls controls, GameTime gameTime)
         {
             // Jump on button press
-            if (controls.onPress(Keys.Up, Buttons.DPadUp) && grounded)
+            if (controls.onPress(Keys.Up, Buttons.A) && grounded)
             {
                 y_vel = -13;
                 jumpPoint = (int)(gameTime.TotalGameTime.TotalMilliseconds);

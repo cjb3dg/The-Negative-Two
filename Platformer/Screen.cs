@@ -13,7 +13,7 @@ namespace The_Negative_One
         public string Type;
         protected ContentManager content;
         public virtual void LoadContent(ContentManager contentManager) { }
-        public virtual void Update(GameMain game) { }
+        public virtual void Update(GameMain game, Controls controls) { }
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice) { }
     }
 }
