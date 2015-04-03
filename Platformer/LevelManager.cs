@@ -38,7 +38,7 @@ namespace Platformer
 
             bosses = new List<Boss>();
             this.cameraStill = false;
-            this.cameraX = 0;
+            this.cameraX = -350;
         }
 
         public void load()

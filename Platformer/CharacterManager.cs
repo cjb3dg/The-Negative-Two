@@ -25,7 +25,7 @@ namespace Platformer
 
         public CharacterManager(LevelManager lvl, InversionManager inv, ContentManager cont)
         {
-            player = new Player(400, 400, 50, 50);
+            player = new Player(25, 400, 50, 50);
             enemyList = new List<Enemy>();
             projectileList = new List<Projectile>();
             lvlManager = lvl;
@@ -132,7 +132,7 @@ namespace Platformer
             }
             foreach (Projectile p in projectileList)
             {
-                p.Update(oList, ref enemyList, cameraX);
+                p.Update(oList, ref enemyList, ref bossList, cameraX);
             }
             foreach (Boss b in bossList)
             {
@@ -144,7 +144,7 @@ namespace Platformer
             bossList.RemoveAll(b => !b.isAlive());
 
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, invManager, door, cameraStill);
+            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, invManager, door, cameraStill);
 
             if (player.Shoot(controls))
             {

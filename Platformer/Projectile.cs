@@ -27,12 +27,13 @@ namespace Platformer
             this.alive = true;
         }
 
-        public void Update(List<Obstacle> oList, ref List<Enemy> eList, int cameraX)
+        public void Update(List<Obstacle> oList, ref List<Enemy> eList, ref List<Boss> bList, int cameraX)
         {
             spriteX += (int)x_vel;
             spriteY += (int)y_vel;
             checkObstacleCollisions(oList);
             checkEnemyCollisions(ref eList);
+            checkBossCollisions(ref bList);
             checkBounds(cameraX);
         }
 
@@ -67,6 +68,22 @@ namespace Platformer
                 {
                     alive = false;
                     e.kill();
+                }
+            }
+        }
+
+        private void checkBossCollisions(ref List<Boss> bList)
+        {
+            foreach (Boss e in bList)
+            {
+                if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+                {
+                    alive = false;
+                    e.damage(1);
+                    if (e.curHP <= 0)
+                    {
+                        e.kill();
+                    }
                 }
             }
         }

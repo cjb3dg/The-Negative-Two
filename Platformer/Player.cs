@@ -144,9 +144,9 @@ namespace Platformer
             }
         }
 
-        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, InversionManager inv, Door door, bool cameraStill)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, InversionManager inv, Door door, bool cameraStill)
         {
-            int retVal = Move(controls, oList, eList, door, cameraStill);
+            int retVal = Move(controls, oList, eList, bList, door, cameraStill);
             Jump(controls, gameTime);
             Invert(controls, inv);
             if (cooldown > 0)
@@ -182,7 +182,7 @@ namespace Platformer
             }
         }
 
-        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, Door door, bool cameraStill)
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, Door door, bool cameraStill)
         {
             int oldX = spriteX;
 
@@ -223,6 +223,7 @@ namespace Platformer
             // Check up/down collisions, then left/right
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
+            checkBossCollisions(bList);
             checkLevelSuccess(door);
 
             if (cameraStill)
@@ -239,7 +240,18 @@ namespace Platformer
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                 {
-                    curHP -= 10;
+                    curHP -= 2;
+                }
+            }
+        }
+
+        private void checkBossCollisions(List<Boss> bList)
+        {
+            foreach (Boss e in bList)
+            {
+                if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+                {
+                    curHP -= 5;
                 }
             }
         }
