@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace Platformer
+namespace The_Negative_One
 {
     /* All non-neutral objects */
     abstract class Invertible : Sprite

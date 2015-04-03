@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace Platformer
+namespace The_Negative_One
 {
 #if WINDOWS || LINUX
     /// <summary>
@@ -18,7 +18,7 @@ namespace Platformer
         [STAThread]
         static void Main()
         {
-            using (var game = new PlatformerMain())
+            using (var game = new GameMain())
                 game.Run();
         }
     }

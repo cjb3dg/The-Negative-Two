@@ -11,7 +11,7 @@ using Tao.Sdl;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 
-namespace Platformer
+namespace The_Negative_One
 {
     class CharacterManager
     {

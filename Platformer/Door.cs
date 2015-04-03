@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Platformer
+namespace The_Negative_One
 {
     class Door : Invertible
     {

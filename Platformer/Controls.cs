@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Tao.Sdl;
 
-namespace Platformer
+namespace The_Negative_One
 {
 	public class Controls
 	{

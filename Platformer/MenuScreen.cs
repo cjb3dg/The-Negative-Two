@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Platformer
+namespace The_Negative_One
 {
     class MenuScreen : Screen
     {
@@ -37,7 +37,7 @@ namespace Platformer
             font = contentManager.Load<SpriteFont>("MenuFont");
         }
 
-        public override void Update(PlatformerMain game) {
+        public override void Update(GameMain game) {
             // if down key, go down in array
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {

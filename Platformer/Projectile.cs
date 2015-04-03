@@ -6,7 +6,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 
 
-namespace Platformer
+namespace The_Negative_One
 {
     class Projectile : Invertible
     {
