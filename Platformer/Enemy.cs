@@ -30,6 +30,9 @@ namespace Platformer
             this.mPattern = mPattern;
             this.remainingDelay = .5;
             this.alive = true;
+            this.xVel = mPattern.xVList[0];
+            this.yVel = mPattern.xVList[0];
+
         }
 
         public Enemy(Enemy e) //Copy Constructor

@@ -17,6 +17,7 @@ namespace Platformer
     {
         public ContentManager content;
         public List<Enemy> enemyList;
+        public List<Boss> bossList = new List<Boss>();
         public List<Projectile> projectileList;
         public Player player;
         public LevelManager lvlManager;
@@ -33,114 +34,93 @@ namespace Platformer
             inv.registerInvertible(player);
         }
 
+        public void LoadEnemies(string filename)
+        {
+            string line;
+
+            // Read the file and display it line by line.
+            System.IO.StreamReader file = new System.IO.StreamReader(filename);
+            while ((line = file.ReadLine()) != null)
+            {
+                if (line == "Enemy")
+                {
+                    int x = Convert.ToInt32(file.ReadLine());
+                    int y = Convert.ToInt32(file.ReadLine());
+                    int width = Convert.ToInt32(file.ReadLine());
+                    int height = Convert.ToInt32(file.ReadLine());
+                    Texture2D normal = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D inverted = content.Load<Texture2D>(file.ReadLine());
+                    int curHP = Convert.ToInt32(file.ReadLine());
+                    MovementPattern mPattern;
+                    List<double> xVList = new List<double>();
+                    List<double> yVList = new List<double>();
+
+                    while ((line = file.ReadLine()) != "endEnemy")
+                    {
+                        string line2 = file.ReadLine();
+                        xVList.Add(Convert.ToDouble(line));
+                        yVList.Add(Convert.ToDouble(line2));
+                    }
+                    mPattern = new MovementPattern(xVList, yVList);
+
+                    Enemy newEnemy = new Enemy(x, y, width, height, normal, inverted, curHP, mPattern);
+                    enemyList.Add(newEnemy);
+                }
+
+                else if (line == "Boss")
+                {
+                    int x = Convert.ToInt32(file.ReadLine());
+                    int y = Convert.ToInt32(file.ReadLine());
+                    int width = Convert.ToInt32(file.ReadLine());
+                    int height = Convert.ToInt32(file.ReadLine());
+                    Texture2D normal = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D inverted = content.Load<Texture2D>(file.ReadLine());
+                    int maxHP = Convert.ToInt32(file.ReadLine());
+                    MovementPattern mPattern;
+                    List<MovementPattern> mPList = new List<MovementPattern>();
+                    List<double> xVList = new List<double>();
+                    List<double> yVList = new List<double>();
+
+                    while ((line = file.ReadLine()) != "endBoss")
+                    {
+                        if (line == "endPattern")
+                        {
+                            mPattern = new MovementPattern(xVList, yVList);
+                            mPList.Add(mPattern);
+                            xVList = new List<double>();
+                            yVList = new List<double>();
+                        }
+
+                        else
+                        {
+                            string line2 = file.ReadLine();
+                            xVList.Add(Convert.ToDouble(line));
+                            yVList.Add(Convert.ToDouble(line2));
+                        }
+
+                    }
+                    mPattern = new MovementPattern(xVList, yVList);
+
+                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player);
+                    bossList.Add(newBoss);
+                }
+
+            }
+
+            file.Close();
+
+            // Suspend the screen.
+            Console.ReadLine();
+        }
+
         public void Load()
         {
+            LoadEnemies("Content/test.txt");
             player.LoadContent(this.content);
             //shouldn't be in the final version, but here to provide some textures
             Texture2D platformGrey = content.Load<Texture2D>("Platform_grey");
             Texture2D platformBlack = content.Load<Texture2D>("Platform_black");
             Texture2D platformWhite = content.Load<Texture2D>("Platform_white");
-
-
-            List<double> xVList = new List<double>();
-            List<double> yVList = new List<double>();
-            List<double> xVList2 = new List<double>();
-            List<double> yVList2 = new List<double>();
-
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(-1);
-            yVList.Add(1);
-            xVList.Add(-2);
-            yVList.Add(0);
-
-            xVList.Add(2);
-            yVList.Add(0);
-            xVList.Add(1);
-            yVList.Add(-1);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-
-
-            xVList.Add(2);
-            yVList.Add(0);
-            xVList.Add(2);
-            yVList.Add(0);
-
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(2);
-            xVList.Add(0);
-            yVList.Add(1);
-
-            xVList.Add(0);
-            yVList.Add(-1);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-            xVList.Add(0);
-            yVList.Add(-2);
-
-            xVList.Add(-2);
-            yVList.Add(0);
-            xVList.Add(-2);
-            yVList.Add(0);
-
-
-            xVList2.Add(0);
-            yVList2.Add(2);
-            xVList2.Add(0);
-            yVList2.Add(2);
-            xVList2.Add(0);
-            yVList2.Add(2);
-            xVList2.Add(0);
-            yVList2.Add(2);
-
-            xVList2.Add(0);
-            yVList2.Add(-2);
-            xVList2.Add(0);
-            yVList2.Add(-2);
-            xVList2.Add(0);
-            yVList2.Add(-2);
-            xVList2.Add(0);
-            yVList2.Add(-2);
-
-            MovementPattern myPattern = new MovementPattern(xVList, yVList);
-            MovementPattern myPattern2 = new MovementPattern(xVList2, yVList2);
-            Enemy myEnemy = new Enemy(330, 80, 45, 45, content.Load<Texture2D>("Butterfly_s"), content.Load<Texture2D>("Butterfly_s_i"), 1, myPattern);
-            Enemy myEnemy2 = new Enemy(195, 80, 45, 45, content.Load<Texture2D>("Butterfly_s"), content.Load<Texture2D>("Butterfly_s_i"), 1, myPattern2);
-            myEnemy.yVel = 2;
-            myEnemy2.yVel = 2;
-            enemyList.Add(myEnemy);
-            enemyList.Add(myEnemy2);
 
         }
 
@@ -154,8 +134,15 @@ namespace Platformer
             {
                 p.Update(oList, ref enemyList, cameraX);
             }
+            foreach (Boss b in bossList)
+            {
+                b.Update(gametime, player);
+            }
+
             projectileList.RemoveAll(p => !p.isAlive());
             enemyList.RemoveAll(e => !e.isAlive());
+            bossList.RemoveAll(b => !b.isAlive());
+
 
             int retVal = player.Update(controls, gametime, oList, enemyList, invManager, door, cameraStill);
 
@@ -217,6 +204,10 @@ namespace Platformer
             foreach (Enemy e in enemyList)
             {
                 e.Draw(spriteBatch, cameraX);
+            }
+            foreach (Boss b in bossList)
+            {
+                b.Draw(spriteBatch, cameraX);
             }
             if (player.isAlive())
             {
