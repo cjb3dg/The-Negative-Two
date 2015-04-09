@@ -22,7 +22,6 @@ namespace The_Negative_One
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Controls controls;
-        private Obstacle[] oList = new Obstacle[4];
         CharacterManager characterManager;
         LevelManager levelManager;
         InversionManager inversionManager;
@@ -31,8 +30,10 @@ namespace The_Negative_One
         private MenuScreen mainMenuScreen;
         private MenuScreen pauseMenu;
         private MenuScreen victoryMenu;
+        private MenuScreen deathMenu;
 
         private bool IsGameRunning = false;
+        private int currentLevel;
 
         private static SoundEffect song;
         private static SoundEffect song_i;
@@ -47,6 +48,8 @@ namespace The_Negative_One
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
 
+            currentLevel = 1;
+
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
                 new MenuItem("EXIT", "Exit")
@@ -59,6 +62,10 @@ namespace The_Negative_One
                 new MenuItem("NEXT LEVEL", "NextLevelScreen"),
                 new MenuItem("EXIT", "Exit")
             }, "VictoryMenu");
+            deathMenu = new MenuScreen(new List<MenuItem> {
+                new MenuItem("RESTART LEVEL", "SameLevelScreen"),
+                new MenuItem("EXIT", "Exit")
+            }, "DeathMenu");
             currentMenuScreen = mainMenuScreen;
         }
 
@@ -98,8 +105,9 @@ namespace The_Negative_One
             mainMenuScreen.LoadContent(Content);
             pauseMenu.LoadContent(Content);
             victoryMenu.LoadContent(Content);
+            deathMenu.LoadContent(Content);
 
-            levelManager.load();
+            levelManager.load(currentLevel);
         }
 
         /// <summary>
@@ -125,6 +133,11 @@ namespace The_Negative_One
             {
                 ChangeScreen(victoryMenu.Type);
                 characterManager.player.victory = false;
+            }
+            else if (!characterManager.player.isAlive())
+            {
+                ChangeScreen(deathMenu.Type);
+                characterManager.player.setAlive(true);
             }
             else if (IsGameRunning)
             {
@@ -191,7 +204,25 @@ namespace The_Negative_One
                 currentMenuScreen = victoryMenu;
                 IsGameRunning = false;
             }
-            else if (targetScreen == "Exit" || targetScreen == "NextLevelScreen") // TODO: next level stuff
+            else if (targetScreen == deathMenu.Type)
+            {
+                currentMenuScreen = deathMenu;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == "SameLevelScreen")
+            {
+                levelManager.unload();
+                levelManager.load(currentLevel);
+                IsGameRunning = true;
+            }
+            else if (targetScreen == "NextLevelScreen")
+            {
+                levelManager.unload();
+                currentLevel++;
+                levelManager.load(currentLevel);
+                IsGameRunning = true;
+            }
+            else if (targetScreen == "Exit") // TODO: next level stuff
             {
                 Exit();
             }

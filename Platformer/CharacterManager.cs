@@ -31,7 +31,6 @@ namespace The_Negative_One
             lvlManager = lvl;
             invManager = inv;
             content = cont;
-            inv.registerInvertible(player);
         }
 
         public void LoadEnemies(string filename)
@@ -116,15 +115,20 @@ namespace The_Negative_One
         public void Load()
         {
             LoadEnemies("Content/test.txt");
+            player = new Player(25, 400, 50, 50);
             player.LoadContent(this.content);
-            //shouldn't be in the final version, but here to provide some textures
-            Texture2D platformGrey = content.Load<Texture2D>("Platform_grey");
-            Texture2D platformBlack = content.Load<Texture2D>("Platform_black");
-            Texture2D platformWhite = content.Load<Texture2D>("Platform_white");
+            invManager.registerInvertible(player);
 
         }
 
-        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, Door door, bool cameraStill, int cameraX)
+        public void unload()
+        {
+            enemyList.Clear();
+            projectileList.Clear();
+            bossList.Clear();
+        }
+
+        public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, List<Item> itemList, Door door, bool cameraStill, int cameraX)
         {
             foreach (Enemy e in enemyList)
             {
@@ -144,7 +148,7 @@ namespace The_Negative_One
             bossList.RemoveAll(b => !b.isAlive());
 
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, invManager, door, cameraStill);
+            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, invManager, door, cameraStill);
 
             if (player.Shoot(controls))
             {
