@@ -32,7 +32,7 @@ namespace The_Negative_One
         public int curEnergy;
         public int energyCost;
         public int energyRecover;
-        private int floorHeight = 480;
+        private int floorHeight = 800;
 
         public Player(int x, int y, int width, int height)
         {
@@ -146,9 +146,9 @@ namespace The_Negative_One
             }
         }
 
-        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, InversionManager inv, Door door, bool cameraStill)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, InversionManager inv, Door door, bool cameraStill, int cameraX)
         {
-            int retVal = Move(controls, oList, eList, bList, iList, door, cameraStill);
+            int retVal = Move(controls, oList, eList, bList, iList, door, cameraStill, cameraX);
             Jump(controls, gameTime);
             Invert(controls, inv);
             if (cooldown > 0)
@@ -161,7 +161,7 @@ namespace The_Negative_One
 
         public void CheckDeath()
         {
-            if (curHP <= 0)
+            if (curHP <= 0 || spriteY > floorHeight)
             {
                 alive = false;
             }
@@ -189,7 +189,7 @@ namespace The_Negative_One
             }
         }
 
-        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, Door door, bool cameraStill)
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, Door door, bool cameraStill, int cameraX)
         {
             int oldX = spriteX;
 
@@ -240,6 +240,14 @@ namespace The_Negative_One
 
             if (cameraStill)
             {
+                if (spriteX < cameraX)
+                {
+                    spriteX = cameraX;
+                }
+                if (spriteX > cameraX + 1280)
+                {
+                    spriteX = cameraX + 1280 - spriteWidth;
+                }
                 return 0;
             }
             int diffX = spriteX - oldX;
@@ -305,6 +313,7 @@ namespace The_Negative_One
 
         private void checkObstacleCollisions(List<Obstacle> oList)
         {
+            grounded = false;
             foreach (Obstacle o in oList)
             {
                 if (!(spriteX + spriteWidth < o.getX() || spriteX > o.getX() + o.getWidth() || spriteY + spriteHeight < o.getY() || spriteY > o.getY() + o.getHeight()))
@@ -312,10 +321,10 @@ namespace The_Negative_One
                     if (spriteY + spriteHeight <= o.getY() + y_vel && y_vel >= 0 && spriteX + spriteWidth > o.getX() && spriteX < o.getX() + o.getWidth())
                     {
                         spriteY = o.getY() - spriteHeight;
+                        y_vel = 0;
                         grounded = true;
-                        return;
                     }
-                    if (spriteY >= o.getY() + o.getHeight() + y_vel && y_vel < 0 && spriteX + spriteWidth > o.getX() && spriteX < o.getX() + o.getWidth())
+                    if (spriteY >= o.getY() + o.getHeight() + y_vel && y_vel < 0 && spriteX + spriteWidth > o.getX() && spriteX < o.getX() + o.getWidth() && !grounded)
                     {
                         spriteY = o.getY() + o.getHeight();
                         y_vel = 0;
@@ -332,13 +341,11 @@ namespace The_Negative_One
                     }
                 }
             }
-            if (spriteY >= floorHeight)
+            /*if (spriteY >= floorHeight)
             {
                 spriteY = floorHeight;
                 grounded = true;
-                return;
-            }
-            grounded = false;
+            }*/
         }
 
         public void checkLevelSuccess(Door door)
@@ -365,7 +372,7 @@ namespace The_Negative_One
             // Jump on button press
             if (controls.onPress(Keys.Up, Buttons.A) && grounded)
             {
-                y_vel = -13;
+                y_vel = -11;
                 jumpPoint = (int)(gameTime.TotalGameTime.TotalMilliseconds);
                 grounded = false;
             }

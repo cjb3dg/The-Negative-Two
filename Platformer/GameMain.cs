@@ -43,6 +43,11 @@ namespace The_Negative_One
         public GameMain()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
+
             inversionManager = new InversionManager();
             characterManager = new CharacterManager(levelManager, inversionManager, Content);
             levelManager = new LevelManager(inversionManager, characterManager, Content);

@@ -115,7 +115,7 @@ namespace The_Negative_One
         public void Load()
         {
             LoadEnemies("Content/test.txt");
-            player = new Player(25, 400, 50, 50);
+            player = new Player(0, 645, 41, 32);
             player.LoadContent(this.content);
             invManager.registerInvertible(player);
 
@@ -147,8 +147,13 @@ namespace The_Negative_One
             enemyList.RemoveAll(e => !e.isAlive());
             bossList.RemoveAll(b => !b.isAlive());
 
+            if (bossList.Count == 0)
+            {
+                player.victory = true;
+            }
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, invManager, door, cameraStill);
+
+            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, invManager, door, cameraStill, cameraX);
 
             if (player.Shoot(controls))
             {
