@@ -64,6 +64,7 @@ namespace The_Negative_One
 
                     Enemy newEnemy = new Enemy(x, y, width, height, normal, inverted, curHP, mPattern);
                     enemyList.Add(newEnemy);
+                    invManager.registerInvertible(newEnemy);
                 }
 
                 else if (line == "Boss")
@@ -112,9 +113,29 @@ namespace The_Negative_One
             Console.ReadLine();
         }
 
-        public void Load()
+        public void Load(int level)
         {
-            LoadEnemies("Content/Enemies.txt");
+            switch (level)
+            {
+                case 1:
+                    LoadEnemies("Content/Enemies1.txt");
+                    break;
+                case 2:
+                    LoadEnemies("Content/Enemies1.txt");
+                    break;
+                case 3:
+                    LoadEnemies("Content/Enemies1.txt");
+                    break;
+                case 4:
+                    LoadEnemies("Content/Enemies1.txt");
+                    break;
+                case 5:
+                    LoadEnemies("Content/Enemies1.txt");
+                    break;
+                default:
+                    LoadEnemies("Content/Enemies1.txt");
+                    break;
+            }
             player = new Player(0, 645, 37, 41);
             player.LoadContent(this.content);
             invManager.registerInvertible(player);
@@ -138,9 +159,12 @@ namespace The_Negative_One
             {
                 p.Update(oList, ref enemyList, ref bossList, cameraX, player);
             }
-            foreach (Boss b in bossList)
+            if (cameraStill)
             {
-                b.Update(gametime, player, enemyList, content);
+                foreach (Boss b in bossList)
+                {
+                    b.Update(gametime, player, enemyList, content);
+                }
             }
 
             projectileList.RemoveAll(p => !p.isAlive());
@@ -240,33 +264,36 @@ namespace The_Negative_One
             }
         }
 
-        public void DrawBossHP(SpriteBatch spriteBatch, List<Boss> bList)
+        public void DrawBossHP(SpriteBatch spriteBatch, List<Boss> bList, bool cameraStill)
         {
-            Texture2D temp = content.Load<Texture2D>("Platform_grey");
-            Texture2D temp2 = content.Load<Texture2D>("Platform_white");
-            Texture2D temp3 = content.Load<Texture2D>("Platform_black");
-            foreach (Boss b in bList)
+            if (cameraStill)
             {
-                if (player.IsInverted == true)
+                Texture2D temp = content.Load<Texture2D>("Platform_grey");
+                Texture2D temp2 = content.Load<Texture2D>("Platform_white");
+                Texture2D temp3 = content.Load<Texture2D>("Platform_black");
+                foreach (Boss b in bList)
                 {
-                    int x = b.maxHP;
-                    spriteBatch.Draw(temp2, new Rectangle(957, 9, (x * 30) + 6, 17), Color.White);
-                    spriteBatch.Draw(temp2, new Rectangle(959, 7, (x * 30) + 2, 21), Color.White);
-                    spriteBatch.Draw(temp3, new Rectangle(959, 9, (x * 30) + 2, 17), Color.Black);
-                    spriteBatch.Draw(temp2, new Rectangle(960, 10, b.curHP * 30, 15), Color.White);
-                }
-                else
-                {
-                    int x = b.maxHP;
-                    spriteBatch.Draw(temp3, new Rectangle(957, 9, (x * 30) + 6, 17), Color.Black);
-                    spriteBatch.Draw(temp3, new Rectangle(959, 7, (x * 30) + 2, 21), Color.Black);
-                    spriteBatch.Draw(temp2, new Rectangle(959, 9, (x * 30) + 2, 17), Color.White);
-                    spriteBatch.Draw(temp3, new Rectangle(960, 10, b.curHP * 30, 15), Color.Black);
+                    if (player.IsInverted == true)
+                    {
+                        int x = b.maxHP;
+                        spriteBatch.Draw(temp2, new Rectangle(957, 9, (x * 30) + 6, 17), Color.White);
+                        spriteBatch.Draw(temp2, new Rectangle(959, 7, (x * 30) + 2, 21), Color.White);
+                        spriteBatch.Draw(temp3, new Rectangle(959, 9, (x * 30) + 2, 17), Color.Black);
+                        spriteBatch.Draw(temp2, new Rectangle(960, 10, b.curHP * 30, 15), Color.White);
+                    }
+                    else
+                    {
+                        int x = b.maxHP;
+                        spriteBatch.Draw(temp3, new Rectangle(957, 9, (x * 30) + 6, 17), Color.Black);
+                        spriteBatch.Draw(temp3, new Rectangle(959, 7, (x * 30) + 2, 21), Color.Black);
+                        spriteBatch.Draw(temp2, new Rectangle(959, 9, (x * 30) + 2, 17), Color.White);
+                        spriteBatch.Draw(temp3, new Rectangle(960, 10, b.curHP * 30, 15), Color.Black);
+                    }
                 }
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, int cameraX)
+        public void Draw(SpriteBatch spriteBatch, int cameraX, bool cameraStill)
         {
             foreach (Projectile p in projectileList)
             {
@@ -276,9 +303,12 @@ namespace The_Negative_One
             {
                 e.Draw(spriteBatch, cameraX);
             }
-            foreach (Boss b in bossList)
+            if (cameraStill)
             {
-                b.Draw(spriteBatch, cameraX);
+                foreach (Boss b in bossList)
+                {
+                    b.Draw(spriteBatch, cameraX);
+                }
             }
             if (player.isAlive())
             {
@@ -286,7 +316,7 @@ namespace The_Negative_One
             }
 
             DrawHPAndEnergy(spriteBatch);
-            DrawBossHP(spriteBatch, bossList);
+            DrawBossHP(spriteBatch, bossList, cameraStill);
 
             if (player.victory == true)
             {

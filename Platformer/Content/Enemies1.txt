@@ -82,7 +82,7 @@ butterfly_i
 0
 endEnemy
 Boss
-5640
+5840
 308
 123
 196

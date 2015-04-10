@@ -224,7 +224,7 @@ namespace The_Negative_One
             // Check up/down collisions, then left/right
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
-            checkBossCollisions(bList);
+            checkBossCollisions(bList, cameraStill);
             checkItemCollisions(iList);
             checkProjectileCollisions(pList);
 
@@ -241,7 +241,7 @@ namespace The_Negative_One
                 {
                     spriteX = cameraX;
                 }
-                if (spriteX > cameraX + 1280)
+                if (spriteX > cameraX + 1280 - spriteWidth)
                 {
                     spriteX = cameraX + 1280 - spriteWidth;
                 }
@@ -309,16 +309,19 @@ namespace The_Negative_One
             }
         }
 
-        private void checkBossCollisions(List<Boss> bList)
+        private void checkBossCollisions(List<Boss> bList, bool cameraStill)
         {
-            foreach (Boss e in bList)
+            if (cameraStill)
             {
-                if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+                foreach (Boss e in bList)
                 {
-                    if (invulnerability == 0)
+                    if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                     {
-                        curHP -= 100;
-                        invulnerability = 30;
+                        if (invulnerability == 0)
+                        {
+                            curHP -= 100;
+                            invulnerability = 30;
+                        }
                     }
                 }
             }

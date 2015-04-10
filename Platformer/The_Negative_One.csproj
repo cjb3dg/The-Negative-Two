@@ -134,7 +134,7 @@
     <Content Include="Content\Web projectile_i.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Enemies.txt">
+    <None Include="Content\Enemies1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Icon.ico" />

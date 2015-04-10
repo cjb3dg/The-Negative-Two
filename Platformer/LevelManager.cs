@@ -67,6 +67,7 @@ namespace The_Negative_One
                     LoadFromFile("Level1.txt");
                     break;
             }
+            characterManager.Load(level);
         }
 
         public void LoadFromFile(String filename)
@@ -129,7 +130,6 @@ namespace The_Negative_One
             }
 
             inversionManager.Load(contentManager);
-            characterManager.Load();
 
             foreach (Item i in items)
             {
@@ -243,7 +243,7 @@ namespace The_Negative_One
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
-            characterManager.Draw(sb, cameraX);
+            characterManager.Draw(sb, cameraX, cameraStill);
         }
 
         public void MoveCamera(int movement)
