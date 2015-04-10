@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace The_Negative_One
 
         private double projDelay = 2;
         private double remPDelay = 2;
+
+        private int cooldown = 50;
 
         public Boss(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int maxHP, List<MovementPattern> mPList, Player player1) //Moving Constructor
         {
@@ -72,11 +75,11 @@ namespace The_Negative_One
             }
         }
 
-        public void Update(Microsoft.Xna.Framework.GameTime gameTime, Player player1)
+        public void Update(Microsoft.Xna.Framework.GameTime gameTime, Player player1, List<Enemy> eList, ContentManager content)
         {
             UpdateTarget(player1);
             UpdateState();
-
+            this.cooldown--;
             this.remDelay -= gameTime.ElapsedGameTime.TotalSeconds;
             this.remPDelay -= gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -84,6 +87,8 @@ namespace The_Negative_One
             {
                 if (this.mIter + 1 > this.curMPattern.xVList.Count)
                 {
+                    //spawnSpider(eList, content);
+
                     this.mIter = 0;
                     this.mLIter = (this.mLIter + 1) % this.mPList.Count;
                     this.xVel = 0;
@@ -110,6 +115,30 @@ namespace The_Negative_One
                 //Create Projectile here
                 remPDelay = projDelay;
             }
+        }
+
+        public void spawnSpider(List<Enemy> eList, ContentManager content)
+        {
+            List<double> xVList = new List<double>();
+            List<double> yVList = new List<double>();
+            xVList.Add(-2);
+            xVList.Add(-2);
+            yVList.Add(1);
+            yVList.Add(-1);
+
+            MovementPattern spiderPattern = new MovementPattern(xVList, yVList);
+            Enemy spider = new Enemy(this.getX(), this.getY(), 75, 75, content.Load<Texture2D>("smallSpider"), content.Load<Texture2D>("smallSpider_i"), 1, spiderPattern);
+            eList.Add(spider);
+        }
+
+        public bool Shoot(Microsoft.Xna.Framework.GameTime gameTime)
+        {
+            if (cooldown == 0)
+            {
+                cooldown = 50;
+                return true;
+            }
+            return false;
         }
 
         public int getX()

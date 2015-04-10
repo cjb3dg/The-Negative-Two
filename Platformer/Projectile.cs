@@ -13,8 +13,9 @@ namespace The_Negative_One
         private double x_vel;
         private double y_vel;
         private bool alive;
+        private bool friendly;
 
-        public Projectile(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, double x_vel, double y_vel)
+        public Projectile(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, double x_vel, double y_vel, bool friendly)
         {
             this.spriteX = x;
             this.spriteY = y;
@@ -25,13 +26,15 @@ namespace The_Negative_One
             this.x_vel = x_vel;
             this.y_vel = y_vel;
             this.alive = true;
+            this.friendly = friendly;
         }
 
-        public void Update(List<Obstacle> oList, ref List<Enemy> eList, ref List<Boss> bList, int cameraX)
+        public void Update(List<Obstacle> oList, ref List<Enemy> eList, ref List<Boss> bList, int cameraX, Player player)
         {
             spriteX += (int)x_vel;
             spriteY += (int)y_vel;
             checkObstacleCollisions(oList);
+            checkPlayerCollisions(player);
             checkEnemyCollisions(ref eList);
             checkBossCollisions(ref bList);
             checkBounds(cameraX);
@@ -62,6 +65,10 @@ namespace The_Negative_One
 
         private void checkEnemyCollisions(ref List<Enemy> eList)
         {
+            if (friendly == false)
+            {
+                return;
+            }
             foreach (Enemy e in eList)
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
@@ -74,6 +81,10 @@ namespace The_Negative_One
 
         private void checkBossCollisions(ref List<Boss> bList)
         {
+            if (friendly == false)
+            {
+                return;
+            }
             foreach (Boss e in bList)
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
@@ -84,6 +95,23 @@ namespace The_Negative_One
                     {
                         e.kill();
                     }
+                }
+            }
+        }
+
+        private void checkPlayerCollisions(Player e)
+        {
+            if (friendly == true)
+            {
+                return;
+            }
+            else if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+            {
+                alive = false;
+                e.curHP-= 100;
+                if (e.curHP <= 0)
+                {
+                    e.CheckDeath();
                 }
             }
         }

@@ -136,11 +136,11 @@ namespace The_Negative_One
             }
             foreach (Projectile p in projectileList)
             {
-                p.Update(oList, ref enemyList, ref bossList, cameraX);
+                p.Update(oList, ref enemyList, ref bossList, cameraX, player);
             }
             foreach (Boss b in bossList)
             {
-                b.Update(gametime, player);
+                b.Update(gametime, player, enemyList, content);
             }
 
             projectileList.RemoveAll(p => !p.isAlive());
@@ -165,7 +165,25 @@ namespace The_Negative_One
                     projectileXVel = -4;
                     projectileX = 2;
                 }
-                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0));
+                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0, true));
+            }
+
+            foreach (Boss b in bossList)
+            {
+                if (b.Shoot(gametime))
+                {
+                    double x = b.getX() - player.getX();
+                    double y = b.getY() - player.getY();
+                    double d = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+
+                    double projectileXVel = -4*x/d;
+                    double projectileYVel = -4*y/d;
+                    int projectileX = player.getWidth() - 2;
+                    int projectileY = 18;
+
+                    projectileList.Add(new Projectile(b.getX() + projectileX, b.getY() + projectileY, 44, 44, content.Load<Texture2D>("Web projectile"), content.Load<Texture2D>("Web projectile_i"), projectileXVel, projectileYVel, false));
+
+                }
             }
             return retVal;
         }
@@ -173,8 +191,26 @@ namespace The_Negative_One
         public void DrawHPAndEnergy(SpriteBatch spriteBatch)
         {
             Texture2D temp = content.Load<Texture2D>("Platform_grey");
-            spriteBatch.Draw(temp, new Rectangle(10, 10, player.maxHP / 10, 15), Color.Red);
-            spriteBatch.Draw(temp, new Rectangle(10, 10, player.getHP() / 10, 15), Color.Green);
+            Texture2D temp2 = content.Load<Texture2D>("Platform_white");
+            Texture2D temp3 = content.Load<Texture2D>("Platform_black");
+
+            if (player.IsInverted == true)
+            {
+                int x = player.maxHP;
+                spriteBatch.Draw(temp2, new Rectangle(7, 9, (x / 10) + 6, 17), Color.White);
+                spriteBatch.Draw(temp2, new Rectangle(9, 7, (x / 10) + 2, 21), Color.White);
+                spriteBatch.Draw(temp3, new Rectangle(9, 9, (x / 10) + 2, 17), Color.Black);
+                spriteBatch.Draw(temp2, new Rectangle(10, 10, player.getHP() / 10, 15), Color.White);
+            }
+            else
+            {
+                int x = player.maxHP;
+                spriteBatch.Draw(temp3, new Rectangle(7, 9, (x / 10) + 6, 17), Color.Black);
+                spriteBatch.Draw(temp3, new Rectangle(9, 7, (x / 10) + 2, 21), Color.Black);
+                spriteBatch.Draw(temp2, new Rectangle(9, 9, (x / 10) + 2, 17), Color.White);
+                spriteBatch.Draw(temp3, new Rectangle(10, 10, player.getHP() / 10, 15), Color.Black);
+            }
+
             spriteBatch.Draw(temp, new Rectangle(10, 30, player.maxEnergy / 10, 15), Color.Gray);
             spriteBatch.Draw(temp, new Rectangle(45, 30, player.maxEnergy / 10, 15), Color.Gray);
             spriteBatch.Draw(temp, new Rectangle(80, 30, player.maxEnergy / 10, 15), Color.Gray);
@@ -204,6 +240,32 @@ namespace The_Negative_One
             }
         }
 
+        public void DrawBossHP(SpriteBatch spriteBatch, List<Boss> bList)
+        {
+            Texture2D temp = content.Load<Texture2D>("Platform_grey");
+            Texture2D temp2 = content.Load<Texture2D>("Platform_white");
+            Texture2D temp3 = content.Load<Texture2D>("Platform_black");
+            foreach (Boss b in bList)
+            {
+                if (player.IsInverted == true)
+                {
+                    int x = b.maxHP;
+                    spriteBatch.Draw(temp2, new Rectangle(957, 9, (x * 30) + 6, 17), Color.White);
+                    spriteBatch.Draw(temp2, new Rectangle(959, 7, (x * 30) + 2, 21), Color.White);
+                    spriteBatch.Draw(temp3, new Rectangle(959, 9, (x * 30) + 2, 17), Color.Black);
+                    spriteBatch.Draw(temp2, new Rectangle(960, 10, b.curHP * 30, 15), Color.White);
+                }
+                else
+                {
+                    int x = b.maxHP;
+                    spriteBatch.Draw(temp3, new Rectangle(957, 9, (x * 30) + 6, 17), Color.Black);
+                    spriteBatch.Draw(temp3, new Rectangle(959, 7, (x * 30) + 2, 21), Color.Black);
+                    spriteBatch.Draw(temp2, new Rectangle(959, 9, (x * 30) + 2, 17), Color.White);
+                    spriteBatch.Draw(temp3, new Rectangle(960, 10, b.curHP * 30, 15), Color.Black);
+                }
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch, int cameraX)
         {
             foreach (Projectile p in projectileList)
@@ -224,6 +286,7 @@ namespace The_Negative_One
             }
 
             DrawHPAndEnergy(spriteBatch);
+            DrawBossHP(spriteBatch, bossList);
 
             if (player.victory == true)
             {
