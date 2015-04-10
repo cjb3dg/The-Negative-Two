@@ -25,7 +25,7 @@ namespace The_Negative_One
 
         public CharacterManager(LevelManager lvl, InversionManager inv, ContentManager cont)
         {
-            player = new Player(25, 400, 37, 41);
+            player = new Player(0, 645, 37, 41);
             enemyList = new List<Enemy>();
             projectileList = new List<Projectile>();
             lvlManager = lvl;
@@ -114,7 +114,7 @@ namespace The_Negative_One
 
         public void Load()
         {
-            LoadEnemies("Content/test.txt");
+            LoadEnemies("Content/Enemies.txt");
             player = new Player(0, 645, 37, 41);
             player.LoadContent(this.content);
             invManager.registerInvertible(player);
@@ -153,19 +153,19 @@ namespace The_Negative_One
             }
 
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, invManager, door, cameraStill, cameraX);
+            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, projectileList, invManager, door, cameraStill, cameraX);
 
             if (player.Shoot(controls))
             {
                 double projectileXVel = 4;
-                int projectileX = player.getWidth() - 2;
-                int projectileY = 18;
+                int projectileX = player.getWidth();
+                int projectileY = 25;
                 if (!player.facingRight())
                 {
                     projectileXVel = -4;
-                    projectileX = 2;
+                    projectileX = -4;
                 }
-                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 20, 10, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0, true));
+                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 12, 6, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0, true));
             }
 
             foreach (Boss b in bossList)
@@ -211,32 +211,32 @@ namespace The_Negative_One
                 spriteBatch.Draw(temp3, new Rectangle(10, 10, player.getHP() / 10, 15), Color.Black);
             }
 
-            spriteBatch.Draw(temp, new Rectangle(10, 30, player.maxEnergy / 10, 15), Color.Gray);
-            spriteBatch.Draw(temp, new Rectangle(45, 30, player.maxEnergy / 10, 15), Color.Gray);
-            spriteBatch.Draw(temp, new Rectangle(80, 30, player.maxEnergy / 10, 15), Color.Gray);
+            spriteBatch.Draw(temp, new Rectangle(10, 30, player.maxEnergy / 10, 15), Color.White);
+            spriteBatch.Draw(temp, new Rectangle(45, 30, player.maxEnergy / 10, 15), Color.White);
+            spriteBatch.Draw(temp, new Rectangle(80, 30, player.maxEnergy / 10, 15), Color.White);
             if (player.getEnergy() >= 100)
             {
-                spriteBatch.Draw(temp, new Rectangle(10, 30, 30, 15), Color.Yellow);
+                spriteBatch.Draw(temp, new Rectangle(10, 30, 30, 15), Color.Gray);
             }
             else
             {
-                spriteBatch.Draw(temp, new Rectangle(10, 30, (player.getEnergy() * 3) / 10, 15), Color.Yellow);
+                spriteBatch.Draw(temp, new Rectangle(10, 30, (player.getEnergy() * 3) / 10, 15), Color.Gray);
             }
             if (player.getEnergy() >= 200)
             {
-                spriteBatch.Draw(temp, new Rectangle(45, 30, 30, 15), Color.Yellow);
+                spriteBatch.Draw(temp, new Rectangle(45, 30, 30, 15), Color.Gray);
             }
             else if (player.getEnergy() > 100)
             {
-                spriteBatch.Draw(temp, new Rectangle(45, 30, ((player.getEnergy() - 100) * 3) / 10, 15), Color.Yellow);
+                spriteBatch.Draw(temp, new Rectangle(45, 30, ((player.getEnergy() - 100) * 3) / 10, 15), Color.Gray);
             }
             if (player.getEnergy() >= 300)
             {
-                spriteBatch.Draw(temp, new Rectangle(80, 30, 30, 15), Color.Yellow);
+                spriteBatch.Draw(temp, new Rectangle(80, 30, 30, 15), Color.Gray);
             }
             else if (player.getEnergy() > 200)
             {
-                spriteBatch.Draw(temp, new Rectangle(80, 30, ((player.getEnergy() - 200) * 3) / 10, 15), Color.Yellow);
+                spriteBatch.Draw(temp, new Rectangle(80, 30, ((player.getEnergy() - 200) * 3) / 10, 15), Color.Gray);
             }
         }
 

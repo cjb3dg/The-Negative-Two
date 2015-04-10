@@ -117,12 +117,10 @@ namespace The_Negative_One
                         }
                         else if (divided[0].Equals("i"))
                         {
-                            items.Add(new Item(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), 0, contentManager.Load<Texture2D>("NormalHeart"), contentManager.Load<Texture2D>("InvertedHeart")));
+                            items.Add(new Item(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), 0, contentManager.Load<Texture2D>("healing_item"), contentManager.Load<Texture2D>("healing_item_i")));
                         }
                     }
                 }
-
-                inversionManager.Load(contentManager);
             }
             catch (Exception e)
             {
@@ -130,6 +128,7 @@ namespace The_Negative_One
                 Console.WriteLine(e.Message);
             }
 
+            inversionManager.Load(contentManager);
             characterManager.Load();
 
             foreach (Item i in items)

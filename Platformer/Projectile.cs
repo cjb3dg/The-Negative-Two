@@ -34,7 +34,7 @@ namespace The_Negative_One
             spriteX += (int)x_vel;
             spriteY += (int)y_vel;
             checkObstacleCollisions(oList);
-            checkPlayerCollisions(player);
+            //checkPlayerCollisions(player);
             checkEnemyCollisions(ref eList);
             checkBossCollisions(ref bList);
             checkBounds(cameraX);
@@ -50,9 +50,29 @@ namespace The_Negative_One
             return spriteX;
         }
 
+        public int getY()
+        {
+            return spriteY;
+        }
+
+        public int getWidth()
+        {
+            return spriteWidth;
+        }
+
+        public int getHeight()
+        {
+            return spriteHeight;
+        }
+
+        public bool IsFriendly()
+        {
+            return friendly;
+        }
+
         public void checkBounds(int cameraX)
         {
-            if (spriteX > 800 + cameraX || spriteY > 500 || spriteX < cameraX)
+            if (spriteX > 1280 + cameraX || spriteY > 800 || spriteX < cameraX || spriteY < -50)
             {
                 alive = false;
             }
