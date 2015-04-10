@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Content;
+using System.IO;
 
 namespace The_Negative_One
 {
@@ -20,11 +21,12 @@ namespace The_Negative_One
         public List<Obstacle> whiteObstacles { get; set; }
         public List<Obstacle> blackObstacles { get; set; }
 
-        public List<Boss> bosses { get; set; }
+        //public List<Boss> bosses { get; set; }
 
         public Door door;
         private int cameraX;
         private bool cameraStill;
+        private int bossCameraX;
 
         public LevelManager(InversionManager inversionManager, CharacterManager characterManager, ContentManager contentManager)
         {
@@ -35,57 +37,118 @@ namespace The_Negative_One
             neutralObstacles = new List<Obstacle>();
             whiteObstacles = new List<Obstacle>();
             blackObstacles = new List<Obstacle>();
+            items = new List<Item>();
 
-            bosses = new List<Boss>();
-            this.cameraStill = false;
-            this.cameraX = -350;
+            //bosses = new List<Boss>();
+            //this.cameraStill = false;
+            //this.cameraX = -350;
         }
 
-        public void load()
+        public void load(int level)
+        {
+            switch (level)
+            {
+                case 1:
+                    LoadFromFile("Level1.txt");
+                    break;
+                case 2:
+                    LoadFromFile("Level1.txt");
+                    break;
+                case 3:
+                    LoadFromFile("Level1.txt");
+                    break;
+                case 4:
+                    LoadFromFile("Level1.txt");
+                    break;
+                case 5:
+                    LoadFromFile("Level1.txt");
+                    break;
+                default:
+                    LoadFromFile("Level1.txt");
+                    break;
+            }
+        }
+
+        public void LoadFromFile(String filename)
         {
             Texture2D platformGrey = contentManager.Load<Texture2D>("Platform_grey");
             Texture2D platformBlack = contentManager.Load<Texture2D>("Platform_black");
             Texture2D platformWhite = contentManager.Load<Texture2D>("Platform_white");
             Texture2D doorTex = contentManager.Load<Texture2D>("Door");
 
-            door = new Door(750, 430, 30, 56, doorTex, doorTex);
-            door.setNeutral();
+            this.cameraX = -655;
+            this.cameraStill = false;
+            if (inversionManager.IsWorldInverted)
+            {
+                inversionManager.invert();
+            }
 
-            Obstacle neutralObstacle = new Obstacle(123, 284, 50, 50, platformGrey, platformGrey);
-            Obstacle neutralObstacle2 = new Obstacle(250, 332, 50, 50, platformGrey, platformGrey);
-            Obstacle neutralObstacle3 = new Obstacle(387, 137, 50, 350, platformGrey, platformGrey);
-            neutralObstacle.setNeutral();
-            neutralObstacle2.setNeutral();
-            neutralObstacle3.setNeutral();
-
-            Obstacle blackObstacle = new Obstacle(123, 332, 50, 150, platformBlack, platformBlack);
-            Obstacle blackObstacle2 = new Obstacle(250, 50, 50, 50, platformBlack, platformBlack);
-            Obstacle blackObstacle3 = new Obstacle(595, 284, 50, 50, platformBlack, platformBlack);
-            blackObstacle.IsInverted = true;
-            blackObstacle2.IsInverted = true;
-            blackObstacle3.IsInverted = true;
-
-            Obstacle whiteObstacle = new Obstacle(250, 180, 50, 50, platformWhite, platformWhite);
-            Obstacle whiteObstacle2 = new Obstacle(513, 182, 50, 50, platformWhite, platformWhite);
-            Obstacle whiteObstacle3 = new Obstacle(512, 373, 50, 50, platformWhite, platformWhite);
-
-            addObject(neutralObstacle);
-            addObject(neutralObstacle2);
-            addObject(neutralObstacle3);
-            addObject(whiteObstacle);
-            addObject(whiteObstacle2);
-            addObject(whiteObstacle3);
-            addObject(blackObstacle);
-            addObject(blackObstacle2);
-            addObject(blackObstacle3);
-            addObject(door);
+            try
+            {
+                using (StreamReader sr = new StreamReader(filename))
+                {
+                    String firstLine = sr.ReadLine();
+                    this.bossCameraX = Convert.ToInt32(firstLine);
+                    while (!sr.EndOfStream)
+                    {
+                        String line = sr.ReadLine();
+                        String[] divided = line.Split(',');
+                        if (divided[0].Equals("g"))
+                        {
+                            Obstacle neutralObstacle = new Obstacle(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), platformGrey, platformGrey);
+                            neutralObstacle.setNeutral();
+                            addObject(neutralObstacle);
+                        }
+                        else if (divided[0].Equals("b"))
+                        {
+                            Obstacle blackObstacle = new Obstacle(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), platformBlack, platformBlack);
+                            blackObstacle.IsInverted = true;
+                            addObject(blackObstacle);
+                        }
+                        else if (divided[0].Equals("w"))
+                        {
+                            Obstacle whiteObstacle = new Obstacle(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), platformWhite, platformWhite);
+                            addObject(whiteObstacle);
+                        }
+                        else if (divided[0].Equals("d"))
+                        {
+                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex);
+                            this.door.setNeutral();
+                        }
+                        else if (divided[0].Equals("i"))
+                        {
+                            items.Add(new Item(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), 0, contentManager.Load<Texture2D>("NormalHeart"), contentManager.Load<Texture2D>("InvertedHeart")));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
 
             characterManager.Load();
+
+            foreach (Item i in items)
+            {
+                inversionManager.registerInvertible(i);
+            }
 
             for (int i = 0; i < characterManager.enemyList.Count; i++)
             {
                 inversionManager.registerInvertible((Invertible)characterManager.enemyList[i]);
             }
+        }
+
+        public void unload()
+        {
+            neutralObstacles.Clear();
+            blackObstacles.Clear();
+            whiteObstacles.Clear();
+            //bosses.Clear();
+            items.Clear();
+            characterManager.unload();
         }
 
         /*
@@ -111,11 +174,11 @@ namespace The_Negative_One
             //objects.Add(obj);
 
             /* list from top of potential inheritance tree to bottom */
-            if (obj is Boss)
+            /*if (obj is Boss)
             {
                 bosses.Add((Boss)obj);
-            }
-            else if (obj is Obstacle)
+            }*/
+            if (obj is Obstacle)
             {
                 if (((Invertible)obj).IsNeutral)
                 {
@@ -149,9 +212,15 @@ namespace The_Negative_One
 
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
-            door.Draw(sb, cameraX);
-            inversionManager.Draw(sb, graphicsDevice);
-            characterManager.Draw(sb, cameraX);
+            if (door != null)
+            {
+                door.Draw(sb, cameraX);
+            }
+
+            foreach (Item i in items)
+            {
+                i.Draw(sb, cameraX);
+            }
 
             for (int i = 0; i < neutralObstacles.Count; i++)
             {
@@ -172,6 +241,8 @@ namespace The_Negative_One
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
+            inversionManager.Draw(sb, graphicsDevice);
+            characterManager.Draw(sb, cameraX);
         }
 
         public void MoveCamera(int movement)
@@ -195,22 +266,49 @@ namespace The_Negative_One
             }
 
             List<Obstacle> activeObstacles = new List<Obstacle>(activeObstacleCount);
-            activeObstacles.AddRange(neutralObstacles);
+            foreach (Obstacle o in neutralObstacles)
+            {
+                if (!(o.getX() + o.getWidth() < cameraX || o.getX() > cameraX + 1280))
+                {
+                    activeObstacles.Add(o);
+                }
+            }
+            //activeObstacles.AddRange(neutralObstacles);
 
             if (inversionManager.IsWorldInverted)
             {
-                activeObstacles.AddRange(whiteObstacles);
+                //activeObstacles.AddRange(whiteObstacles);
+                foreach (Obstacle o in whiteObstacles)
+                {
+                    if (!(o.getX() + o.getWidth() < cameraX || o.getX() > cameraX + 1280))
+                    {
+                        activeObstacles.Add(o);
+                    }
+                }
             }
             else
             {
-                activeObstacles.AddRange(blackObstacles);
+                //activeObstacles.AddRange(blackObstacles);
+                foreach (Obstacle o in blackObstacles)
+                {
+                    if (!(o.getX() + o.getWidth() < cameraX || o.getX() > cameraX + 1280))
+                    {
+                        activeObstacles.Add(o);
+                    }
+                }
             }
 
-            int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, door, cameraStill, cameraX);
+            int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, items, door, cameraStill, cameraX);
+
+            items.RemoveAll(i => !i.isAlive());
 
             if (!cameraStill)
             {
                 MoveCamera(distanceMoved);
+            }
+            if (cameraX > bossCameraX)
+            {
+                CameraStill();
             }
         }
     }

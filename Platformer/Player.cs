@@ -25,13 +25,14 @@ namespace The_Negative_One
         private bool alive = true;
         private bool right = true;
         private int cooldown;
+        private int invulnerability;
         public int maxHP;
         public int curHP;
         public int maxEnergy;
         public int curEnergy;
         public int energyCost;
         public int energyRecover;
-        private int floorHeight = 480;
+        private int floorHeight = 800;
 
         public Player(int x, int y, int width, int height)
         {
@@ -47,6 +48,7 @@ namespace The_Negative_One
             this.energyCost = 100;
             this.energyRecover = 1;
             this.cooldown = 0;
+            this.invulnerability = 0;
 
             floorHeight -= this.spriteHeight;
 
@@ -144,9 +146,9 @@ namespace The_Negative_One
             }
         }
 
-        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, InversionManager inv, Door door, bool cameraStill)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, InversionManager inv, Door door, bool cameraStill, int cameraX)
         {
-            int retVal = Move(controls, oList, eList, bList, door, cameraStill);
+            int retVal = Move(controls, oList, eList, bList, iList, door, cameraStill, cameraX);
             Jump(controls, gameTime);
             Invert(controls, inv);
             if (cooldown > 0)
@@ -159,10 +161,15 @@ namespace The_Negative_One
 
         public void CheckDeath()
         {
-            if (curHP <= 0)
+            if (curHP <= 0 || spriteY > floorHeight)
             {
                 alive = false;
             }
+        }
+
+        public void setAlive(bool a)
+        {
+            alive = a;
         }
 
         public void Invert(Controls controls, InversionManager inv)
@@ -182,25 +189,29 @@ namespace The_Negative_One
             }
         }
 
-        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, Door door, bool cameraStill)
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, Door door, bool cameraStill, int cameraX)
         {
             int oldX = spriteX;
 
             // Sideways Acceleration
-            if (controls.onPress(Keys.Right, Buttons.LeftThumbstickRight))
+            bool rightPressed = controls.isPressed(Keys.Right, Buttons.LeftThumbstickRight);
+            bool leftPressed = controls.isPressed(Keys.Left, Buttons.LeftThumbstickLeft);
+            if ( rightPressed && leftPressed )
             {
-                x_accel += speed;
+                x_accel = 0;
+            }
+            else if (rightPressed)
+            {
+                x_accel = speed;
                 right = true;
             }
-            else if (controls.onRelease(Keys.Right, Buttons.LeftThumbstickRight))
-                x_accel -= speed;
-            if (controls.onPress(Keys.Left, Buttons.LeftThumbstickLeft))
+            else if (leftPressed)
             {
-                x_accel -= speed;
+                x_accel = -1 * speed;
                 right = false;
             }
-            else if (controls.onRelease(Keys.Left, Buttons.LeftThumbstickLeft))
-                x_accel += speed;
+            else
+                x_accel = 0;
 
             double playerFriction = pushing ? (friction * 3) : friction;
             x_vel = x_vel * (1 - playerFriction) + x_accel * .10;
@@ -224,14 +235,42 @@ namespace The_Negative_One
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
             checkBossCollisions(bList);
+            checkItemCollisions(iList);
             checkLevelSuccess(door);
 
             if (cameraStill)
             {
+                if (spriteX < cameraX)
+                {
+                    spriteX = cameraX;
+                }
+                if (spriteX > cameraX + 1280)
+                {
+                    spriteX = cameraX + 1280 - spriteWidth;
+                }
                 return 0;
             }
             int diffX = spriteX - oldX;
             return diffX;
+        }
+
+        private void checkItemCollisions(List<Item> iList)
+        {
+            foreach (Item e in iList)
+            {
+                if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+                {
+                    if (curHP < maxHP && e.getType() == 0)
+                    {
+                        curHP += 200;
+                        if (curHP > maxHP)
+                        {
+                            curHP = maxHP;
+                        }
+                        e.remove();
+                    }
+                }
+            }
         }
 
         private void checkEnemyCollisions(List<Enemy> eList)
@@ -240,8 +279,16 @@ namespace The_Negative_One
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                 {
-                    curHP -= 2;
+                    if (invulnerability <= 0)
+                    {
+                        curHP -= 50;
+                        invulnerability = 30;
+                    }
                 }
+            }
+            if (invulnerability > 0)
+            {
+                invulnerability--;
             }
         }
 
@@ -251,13 +298,22 @@ namespace The_Negative_One
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                 {
-                    curHP -= 5;
+                    if (invulnerability == 0)
+                    {
+                        curHP -= 100;
+                        invulnerability = 30;
+                    }
+                    if (invulnerability > 0)
+                    {
+                        invulnerability--;
+                    }
                 }
             }
         }
 
         private void checkObstacleCollisions(List<Obstacle> oList)
         {
+            grounded = false;
             foreach (Obstacle o in oList)
             {
                 if (!(spriteX + spriteWidth < o.getX() || spriteX > o.getX() + o.getWidth() || spriteY + spriteHeight < o.getY() || spriteY > o.getY() + o.getHeight()))
@@ -265,10 +321,10 @@ namespace The_Negative_One
                     if (spriteY + spriteHeight <= o.getY() + y_vel && y_vel >= 0 && spriteX + spriteWidth > o.getX() && spriteX < o.getX() + o.getWidth())
                     {
                         spriteY = o.getY() - spriteHeight;
+                        y_vel = 0;
                         grounded = true;
-                        return;
                     }
-                    if (spriteY >= o.getY() + o.getHeight() + y_vel && y_vel < 0 && spriteX + spriteWidth > o.getX() && spriteX < o.getX() + o.getWidth())
+                    if (spriteY >= o.getY() + o.getHeight() + y_vel && y_vel < 0 && spriteX + spriteWidth > o.getX() && spriteX < o.getX() + o.getWidth() && !grounded)
                     {
                         spriteY = o.getY() + o.getHeight();
                         y_vel = 0;
@@ -285,13 +341,11 @@ namespace The_Negative_One
                     }
                 }
             }
-            if (spriteY >= floorHeight)
+            /*if (spriteY >= floorHeight)
             {
                 spriteY = floorHeight;
                 grounded = true;
-                return;
-            }
-            grounded = false;
+            }*/
         }
 
         public void checkLevelSuccess(Door door)
@@ -318,7 +372,7 @@ namespace The_Negative_One
             // Jump on button press
             if (controls.onPress(Keys.Up, Buttons.A) && grounded)
             {
-                y_vel = -13;
+                y_vel = -11;
                 jumpPoint = (int)(gameTime.TotalGameTime.TotalMilliseconds);
                 grounded = false;
             }
@@ -335,22 +389,54 @@ namespace The_Negative_One
             {
                 if (!IsInverted)
                 {
-                    spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    //spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    if (invulnerability > 20)
+                    {
+                        spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    }
                 }
                 else
                 {
-                    spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    //spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    if (invulnerability > 20)
+                    {
+                        spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+                    }
                 }
             }
             else
             {
                 if (!IsInverted)
                 {
-                    spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    //spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    if (invulnerability > 20)
+                    {
+                        spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    }
                 }
                 else
                 {
-                    spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    //spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    if (invulnerability > 20)
+                    {
+                        spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                    }
                 }
             }
         }
