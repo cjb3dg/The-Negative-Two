@@ -141,8 +141,8 @@ namespace The_Negative_One
         public void LoadContent(ContentManager content)
         {
             {
-                image = content.Load<Texture2D>("Zero.png");
-                image_i = content.Load<Texture2D>("Zero_i.png");
+                image = content.Load<Texture2D>("neggy_armed_0.png");
+                image_i = content.Load<Texture2D>("neggy_armed_i_0.png");
             }
         }
 

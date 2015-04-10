@@ -3,8 +3,8 @@
 150
 45
 45
-Butterfly_s
-Butterfly_s_i
+butterfly
+butterfly_i
 1
 0.0
 2.0
@@ -72,8 +72,8 @@ Enemy
 80
 45
 45
-Butterfly_s
-Butterfly_s_i
+butterfly
+butterfly_i
 1
 0
 2
