@@ -25,7 +25,7 @@ namespace The_Negative_One
 
         public CharacterManager(LevelManager lvl, InversionManager inv, ContentManager cont)
         {
-            player = new Player(25, 400, 50, 50);
+            player = new Player(25, 400, 37, 41);
             enemyList = new List<Enemy>();
             projectileList = new List<Projectile>();
             lvlManager = lvl;
@@ -115,7 +115,7 @@ namespace The_Negative_One
         public void Load()
         {
             LoadEnemies("Content/test.txt");
-            player = new Player(0, 645, 41, 32);
+            player = new Player(0, 645, 37, 41);
             player.LoadContent(this.content);
             invManager.registerInvertible(player);
 

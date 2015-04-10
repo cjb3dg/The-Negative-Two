@@ -33,6 +33,7 @@ namespace The_Negative_One
         public int energyCost;
         public int energyRecover;
         private int floorHeight = 800;
+        private bool moving = false;
 
         public Player(int x, int y, int width, int height)
         {
@@ -141,22 +142,14 @@ namespace The_Negative_One
         public void LoadContent(ContentManager content)
         {
             {
-                image = content.Load<Texture2D>("Zero.png");
-                image_i = content.Load<Texture2D>("Zero_i.png");
-            }
-        }
+                //image = content.Load<Texture2D>("Zero.png");
+                //image_i = content.Load<Texture2D>("Zero_i.png");
 
-        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, InversionManager inv, Door door, bool cameraStill, int cameraX)
-        {
-            int retVal = Move(controls, oList, eList, bList, iList, door, cameraStill, cameraX);
-            Jump(controls, gameTime);
-            Invert(controls, inv);
-            if (cooldown > 0)
-            {
-                cooldown--;
+                spriteSheet = content.Load<Texture2D>("neggy_spritesheet.png");
+                spriteSheet_i = content.Load<Texture2D>("neggy_spritesheet_i.png");
+                frameHeight = 41;
+                frameWidth = 37;
             }
-            CheckDeath();
-            return retVal;
         }
 
         public void CheckDeath()
@@ -251,6 +244,15 @@ namespace The_Negative_One
                 return 0;
             }
             int diffX = spriteX - oldX;
+
+            if (diffX != 0)
+            {
+                moving = true;
+            }
+            else
+            {
+                moving = false;
+            }
             return diffX;
         }
 
@@ -341,11 +343,6 @@ namespace The_Negative_One
                     }
                 }
             }
-            /*if (spriteY >= floorHeight)
-            {
-                spriteY = floorHeight;
-                grounded = true;
-            }*/
         }
 
         public void checkLevelSuccess(Door door)
@@ -383,61 +380,29 @@ namespace The_Negative_One
             }
         }
 
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, InversionManager inv, Door door, bool cameraStill, int cameraX)
+        {
+            int retVal = Move(controls, oList, eList, bList, iList, door, cameraStill, cameraX);
+            Jump(controls, gameTime);
+            Invert(controls, inv);
+            if (cooldown > 0)
+            {
+                cooldown--;
+            }
+            CheckDeath();
+            UpdateAnimation(gameTime, moving, grounded);
+            return retVal;
+        }
+
         public override void Draw(SpriteBatch spriteBatch, int cameraX)
         {
-            if (right)
+            if (invulnerability > 20)
             {
-                if (!IsInverted)
-                {
-                    //spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-                    if (invulnerability > 20)
-                    {
-                        spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-                    }
-                }
-                else
-                {
-                    //spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-                    if (invulnerability > 20)
-                    {
-                        spriteBatch.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-                    }
-                }
+                DrawAnimation(spriteBatch, !IsInverted, spriteX - cameraX, spriteY, !right);
             }
             else
             {
-                if (!IsInverted)
-                {
-                    //spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
-                    if (invulnerability > 20)
-                    {
-                        spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
-                    }
-                }
-                else
-                {
-                    //spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
-                    if (invulnerability > 20)
-                    {
-                        spriteBatch.Draw(image, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(image_i, null, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
-                    }
-                }
+                DrawAnimation(spriteBatch, IsInverted, spriteX - cameraX, spriteY, !right);
             }
         }
     }

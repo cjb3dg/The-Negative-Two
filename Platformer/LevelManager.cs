@@ -121,6 +121,8 @@ namespace The_Negative_One
                         }
                     }
                 }
+
+                inversionManager.Load(contentManager);
             }
             catch (Exception e)
             {
@@ -212,6 +214,7 @@ namespace The_Negative_One
 
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
+            inversionManager.Draw(sb, graphicsDevice);
             if (door != null)
             {
                 door.Draw(sb, cameraX);
@@ -241,7 +244,6 @@ namespace The_Negative_One
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
-            inversionManager.Draw(sb, graphicsDevice);
             characterManager.Draw(sb, cameraX);
         }
 
