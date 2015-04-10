@@ -153,7 +153,7 @@ namespace The_Negative_One
             }
 
 
-            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, invManager, door, cameraStill, cameraX);
+            int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, projectileList, invManager, door, cameraStill, cameraX);
 
             if (player.Shoot(controls))
             {

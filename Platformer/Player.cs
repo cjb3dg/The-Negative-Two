@@ -146,9 +146,9 @@ namespace The_Negative_One
             }
         }
 
-        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, InversionManager inv, Door door, bool cameraStill, int cameraX)
+        public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, List<Projectile> pList, InversionManager inv, Door door, bool cameraStill, int cameraX)
         {
-            int retVal = Move(controls, oList, eList, bList, iList, door, cameraStill, cameraX);
+            int retVal = Move(controls, oList, eList, bList, iList, pList, door, cameraStill, cameraX);
             Jump(controls, gameTime);
             Invert(controls, inv);
             if (cooldown > 0)
@@ -189,7 +189,7 @@ namespace The_Negative_One
             }
         }
 
-        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, Door door, bool cameraStill, int cameraX)
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, List<Projectile> pList, Door door, bool cameraStill, int cameraX)
         {
             int oldX = spriteX;
 
@@ -236,6 +236,13 @@ namespace The_Negative_One
             checkEnemyCollisions(eList);
             checkBossCollisions(bList);
             checkItemCollisions(iList);
+            checkProjectileCollisions(pList);
+
+            if (invulnerability > 0)
+            {
+                invulnerability--;
+            }
+
             checkLevelSuccess(door);
 
             if (cameraStill)
@@ -252,6 +259,21 @@ namespace The_Negative_One
             }
             int diffX = spriteX - oldX;
             return diffX;
+        }
+
+        private void checkProjectileCollisions(List<Projectile> pList)
+        {
+            foreach (Projectile e in pList)
+            {
+                if (!e.IsFriendly() && !(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+                {
+                    if (invulnerability <= 0)
+                    {
+                        curHP -= 50;
+                        invulnerability = 30;
+                    }
+                }
+            }
         }
 
         private void checkItemCollisions(List<Item> iList)
@@ -286,10 +308,6 @@ namespace The_Negative_One
                     }
                 }
             }
-            if (invulnerability > 0)
-            {
-                invulnerability--;
-            }
         }
 
         private void checkBossCollisions(List<Boss> bList)
@@ -302,10 +320,6 @@ namespace The_Negative_One
                     {
                         curHP -= 100;
                         invulnerability = 30;
-                    }
-                    if (invulnerability > 0)
-                    {
-                        invulnerability--;
                     }
                 }
             }
