@@ -8,7 +8,10 @@ namespace The_Negative_One
 {
     class Door : Invertible
     {
-        public Door(int x, int y, int width, int height, Texture2D image, Texture2D image_i)
+
+        private bool active;
+
+        public Door(int x, int y, int width, int height, Texture2D image, Texture2D image_i, bool active)
         {
             this.spriteX = x;
             this.spriteY = y;
@@ -17,6 +20,7 @@ namespace The_Negative_One
 
             this.image = image;
             this.image_i = image_i;
+            this.active = active;
         }
 
         public int getX()
@@ -34,6 +38,16 @@ namespace The_Negative_One
         public int getHeight()
         {
             return spriteHeight;
+        }
+
+        public bool isActive()
+        {
+            return active;
+        }
+
+        public void setActive(bool act)
+        {
+            active = act;
         }
     }
 }

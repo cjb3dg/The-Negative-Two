@@ -235,6 +235,17 @@ namespace The_Negative_One
 
             checkLevelSuccess(door);
 
+            int diffX = spriteX - oldX;
+
+            if (diffX != 0)
+            {
+                moving = true;
+            }
+            else
+            {
+                moving = false;
+            }
+
             if (cameraStill)
             {
                 if (spriteX < cameraX)
@@ -247,16 +258,7 @@ namespace The_Negative_One
                 }
                 return 0;
             }
-            int diffX = spriteX - oldX;
 
-            if (diffX != 0)
-            {
-                moving = true;
-            }
-            else
-            {
-                moving = false;
-            }
             return diffX;
         }
 
@@ -361,7 +363,7 @@ namespace The_Negative_One
 
         public void checkLevelSuccess(Door door)
         {
-            if (!(spriteX + spriteWidth < door.getX() || spriteX > door.getX() + door.getWidth() ||
+            if (door.isActive() && !(spriteX + spriteWidth < door.getX() || spriteX > door.getX() + door.getWidth() ||
                 spriteY + spriteHeight < door.getY() || spriteY > door.getY() + door.getHeight()))
             {
                 victory = true;

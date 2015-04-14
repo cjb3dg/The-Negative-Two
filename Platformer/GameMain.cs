@@ -217,6 +217,8 @@ namespace The_Negative_One
             else if (targetScreen == "SameLevelScreen")
             {
                 levelManager.unload();
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
                 levelManager.load(currentLevel);
                 IsGameRunning = true;
             }
@@ -224,6 +226,8 @@ namespace The_Negative_One
             {
                 levelManager.unload();
                 currentLevel++;
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
                 levelManager.load(currentLevel);
                 IsGameRunning = true;
             }

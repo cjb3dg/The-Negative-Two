@@ -113,7 +113,7 @@ namespace The_Negative_One
                         }
                         else if (divided[0].Equals("d"))
                         {
-                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex);
+                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex, false);
                             this.door.setNeutral();
                         }
                         else if (divided[0].Equals("i"))
@@ -214,7 +214,7 @@ namespace The_Negative_One
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
             inversionManager.Draw(sb, graphicsDevice);
-            if (door != null)
+            if (door.isActive())
             {
                 door.Draw(sb, cameraX);
             }
@@ -300,6 +300,11 @@ namespace The_Negative_One
             }
 
             int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, items, door, cameraStill, cameraX);
+
+            if (characterManager.bossDead())
+            {
+                door.setActive(true);
+            }
 
             items.RemoveAll(i => !i.isAlive());
 

@@ -101,7 +101,7 @@ namespace The_Negative_One
                     }
                     mPattern = new MovementPattern(xVList, yVList);
 
-                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player);
+                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player, false, false);
                     bossList.Add(newBoss);
                 }
 
@@ -151,30 +151,34 @@ namespace The_Negative_One
 
         public int Update(Controls controls, Microsoft.Xna.Framework.GameTime gametime, List<Obstacle> oList, List<Item> itemList, Door door, bool cameraStill, int cameraX)
         {
+            List<Boss> activeBossList = new List<Boss>();
+            if (cameraStill)
+            {
+                foreach (Boss b in bossList)
+                {
+                    b.active = true;
+                    b.Update(gametime, player, enemyList, content);
+                }
+            }
+            foreach (Boss b in bossList)
+            {
+                if (b.active && b.IsActive(invManager))
+                {
+                    activeBossList.Add(b);
+                }
+            }
             foreach (Enemy e in enemyList)
             {
                 e.Update(gametime, oList);
             }
             foreach (Projectile p in projectileList)
             {
-                p.Update(oList, ref enemyList, ref bossList, cameraX, player);
-            }
-            if (cameraStill)
-            {
-                foreach (Boss b in bossList)
-                {
-                    b.Update(gametime, player, enemyList, content);
-                }
+                p.Update(oList, ref enemyList, ref activeBossList, cameraX, player);
             }
 
             projectileList.RemoveAll(p => !p.isAlive());
             enemyList.RemoveAll(e => !e.isAlive());
             bossList.RemoveAll(b => !b.isAlive());
-
-            if (bossList.Count == 0)
-            {
-                player.victory = true;
-            }
 
 
             int retVal = player.Update(controls, gametime, oList, enemyList, bossList, itemList, projectileList, invManager, door, cameraStill, cameraX);
@@ -291,6 +295,11 @@ namespace The_Negative_One
                     }
                 }
             }
+        }
+
+        public bool bossDead()
+        {
+            return (bossList.Count == 0);
         }
 
         public void Draw(SpriteBatch spriteBatch, int cameraX, bool cameraStill)
