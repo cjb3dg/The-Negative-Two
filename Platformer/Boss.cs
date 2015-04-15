@@ -34,7 +34,7 @@ namespace The_Negative_One
 
         private int cooldown = 50;
 
-        public Boss(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int maxHP, List<MovementPattern> mPList, Player player1, bool inv, bool active) //Moving Constructor
+        public Boss(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int maxHP, List<MovementPattern> mPList, Player player1, bool inv, bool neutral, bool active) //Moving Constructor
         {
             this.spriteX = x;
             this.spriteY = y;
@@ -49,6 +49,7 @@ namespace The_Negative_One
             this.alive = true;
 
             this.IsInverted = inv;
+            this.IsNeutral = neutral;
             this.active = active;
 
             this.curMPattern = mPList[0];

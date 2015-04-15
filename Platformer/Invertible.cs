@@ -56,7 +56,7 @@ namespace The_Negative_One
 
         public bool IsActive(InversionManager im)
         {
-            if (IsInverted != im.IsWorldInverted)
+            if (IsInverted != im.IsWorldInverted || IsNeutral)
             {
                 return true;
             }

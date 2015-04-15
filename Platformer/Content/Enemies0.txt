@@ -95,11 +95,12 @@ butterfly_i
 endEnemy
 Boss
 5840
-660
+580
 30
 30
-platform_grey
-platform_grey
+n
+baby_spider
+baby_spider
 1
 0.0
 0.0

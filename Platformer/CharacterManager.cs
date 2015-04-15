@@ -73,6 +73,7 @@ namespace The_Negative_One
                     int y = Convert.ToInt32(file.ReadLine());
                     int width = Convert.ToInt32(file.ReadLine());
                     int height = Convert.ToInt32(file.ReadLine());
+                    String color = file.ReadLine();
                     Texture2D normal = content.Load<Texture2D>(file.ReadLine());
                     Texture2D inverted = content.Load<Texture2D>(file.ReadLine());
                     int maxHP = Convert.ToInt32(file.ReadLine());
@@ -100,8 +101,19 @@ namespace The_Negative_One
 
                     }
                     mPattern = new MovementPattern(xVList, yVList);
+                    bool invert = false;
+                    bool neutral = false;
 
-                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player, false, false);
+                    if (color.Equals("b"))
+                    {
+                        invert = true;
+                    }
+                    if (color.Equals("n"))
+                    {
+                        neutral = true;
+                    }
+
+                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player, invert, neutral, false);
                     bossList.Add(newBoss);
                 }
 
