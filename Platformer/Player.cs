@@ -224,7 +224,7 @@ namespace The_Negative_One
             // Check up/down collisions, then left/right
             checkObstacleCollisions(oList);
             checkEnemyCollisions(eList);
-            checkBossCollisions(bList);
+            checkBossCollisions(bList, cameraStill);
             checkItemCollisions(iList);
             checkProjectileCollisions(pList);
 
@@ -235,18 +235,6 @@ namespace The_Negative_One
 
             checkLevelSuccess(door);
 
-            if (cameraStill)
-            {
-                if (spriteX < cameraX)
-                {
-                    spriteX = cameraX;
-                }
-                if (spriteX > cameraX + 1280)
-                {
-                    spriteX = cameraX + 1280 - spriteWidth;
-                }
-                return 0;
-            }
             int diffX = spriteX - oldX;
 
             if (diffX != 0)
@@ -257,6 +245,20 @@ namespace The_Negative_One
             {
                 moving = false;
             }
+
+            if (cameraStill)
+            {
+                if (spriteX < cameraX)
+                {
+                    spriteX = cameraX;
+                }
+                if (spriteX > cameraX + 1280 - spriteWidth)
+                {
+                    spriteX = cameraX + 1280 - spriteWidth;
+                }
+                return 0;
+            }
+
             return diffX;
         }
 
@@ -309,16 +311,19 @@ namespace The_Negative_One
             }
         }
 
-        private void checkBossCollisions(List<Boss> bList)
+        private void checkBossCollisions(List<Boss> bList, bool cameraStill)
         {
-            foreach (Boss e in bList)
+            if (cameraStill)
             {
-                if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
+                foreach (Boss e in bList)
                 {
-                    if (invulnerability == 0)
+                    if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                     {
-                        curHP -= 100;
-                        invulnerability = 30;
+                        if (invulnerability == 0)
+                        {
+                            curHP -= 100;
+                            invulnerability = 30;
+                        }
                     }
                 }
             }
@@ -358,7 +363,7 @@ namespace The_Negative_One
 
         public void checkLevelSuccess(Door door)
         {
-            if (!(spriteX + spriteWidth < door.getX() || spriteX > door.getX() + door.getWidth() ||
+            if (door.isActive() && !(spriteX + spriteWidth < door.getX() || spriteX > door.getX() + door.getWidth() ||
                 spriteY + spriteHeight < door.getY() || spriteY > door.getY() + door.getHeight()))
             {
                 victory = true;

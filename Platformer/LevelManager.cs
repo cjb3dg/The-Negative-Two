@@ -48,6 +48,9 @@ namespace The_Negative_One
         {
             switch (level)
             {
+                case 0:
+                    LoadFromFile("Level0.txt");
+                    break;
                 case 1:
                     LoadFromFile("Level1.txt");
                     break;
@@ -60,13 +63,11 @@ namespace The_Negative_One
                 case 4:
                     LoadFromFile("Level1.txt");
                     break;
-                case 5:
-                    LoadFromFile("Level1.txt");
-                    break;
                 default:
-                    LoadFromFile("Level1.txt");
+                    LoadFromFile("Level0.txt");
                     break;
             }
+            characterManager.Load(level);
         }
 
         public void LoadFromFile(String filename)
@@ -74,7 +75,7 @@ namespace The_Negative_One
             Texture2D platformGrey = contentManager.Load<Texture2D>("Platform_grey");
             Texture2D platformBlack = contentManager.Load<Texture2D>("Platform_black");
             Texture2D platformWhite = contentManager.Load<Texture2D>("Platform_white");
-            Texture2D doorTex = contentManager.Load<Texture2D>("Door");
+            Texture2D doorTex = contentManager.Load<Texture2D>("door");
 
             this.cameraX = -655;
             this.cameraStill = false;
@@ -112,7 +113,7 @@ namespace The_Negative_One
                         }
                         else if (divided[0].Equals("d"))
                         {
-                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex);
+                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex, false);
                             this.door.setNeutral();
                         }
                         else if (divided[0].Equals("i"))
@@ -129,7 +130,6 @@ namespace The_Negative_One
             }
 
             inversionManager.Load(contentManager);
-            characterManager.Load();
 
             foreach (Item i in items)
             {
@@ -214,7 +214,7 @@ namespace The_Negative_One
         public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
         {
             inversionManager.Draw(sb, graphicsDevice);
-            if (door != null)
+            if (door.isActive())
             {
                 door.Draw(sb, cameraX);
             }
@@ -243,7 +243,7 @@ namespace The_Negative_One
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
-            characterManager.Draw(sb, cameraX);
+            characterManager.Draw(sb, cameraX, cameraStill);
         }
 
         public void MoveCamera(int movement)
@@ -300,6 +300,11 @@ namespace The_Negative_One
             }
 
             int distanceMoved = characterManager.Update(controls, gameTime, activeObstacles, items, door, cameraStill, cameraX);
+
+            if (characterManager.bossDead())
+            {
+                door.setActive(true);
+            }
 
             items.RemoveAll(i => !i.isAlive());
 

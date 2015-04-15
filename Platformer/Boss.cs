@@ -19,6 +19,8 @@ namespace The_Negative_One
         public int mLIter = 0; //Iterator for mPList
         private bool alive;
 
+        public bool active;
+
         public int state = 1;
 
         private int targetX;
@@ -32,7 +34,7 @@ namespace The_Negative_One
 
         private int cooldown = 50;
 
-        public Boss(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int maxHP, List<MovementPattern> mPList, Player player1) //Moving Constructor
+        public Boss(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int maxHP, List<MovementPattern> mPList, Player player1, bool inv, bool neutral, bool active) //Moving Constructor
         {
             this.spriteX = x;
             this.spriteY = y;
@@ -45,6 +47,10 @@ namespace The_Negative_One
             this.mPList = mPList;
             this.remDelay = .5;
             this.alive = true;
+
+            this.IsInverted = inv;
+            this.IsNeutral = neutral;
+            this.active = active;
 
             this.curMPattern = mPList[0];
 
