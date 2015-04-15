@@ -48,6 +48,9 @@ namespace The_Negative_One
         {
             switch (level)
             {
+                case 0:
+                    LoadFromFile("Level0.txt");
+                    break;
                 case 1:
                     LoadFromFile("Level1.txt");
                     break;
@@ -60,11 +63,8 @@ namespace The_Negative_One
                 case 4:
                     LoadFromFile("Level1.txt");
                     break;
-                case 5:
-                    LoadFromFile("Level1.txt");
-                    break;
                 default:
-                    LoadFromFile("Level1.txt");
+                    LoadFromFile("Level0.txt");
                     break;
             }
             characterManager.Load(level);
@@ -75,7 +75,7 @@ namespace The_Negative_One
             Texture2D platformGrey = contentManager.Load<Texture2D>("Platform_grey");
             Texture2D platformBlack = contentManager.Load<Texture2D>("Platform_black");
             Texture2D platformWhite = contentManager.Load<Texture2D>("Platform_white");
-            Texture2D doorTex = contentManager.Load<Texture2D>("Door");
+            Texture2D doorTex = contentManager.Load<Texture2D>("door");
 
             this.cameraX = -655;
             this.cameraStill = false;

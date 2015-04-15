@@ -117,6 +117,9 @@ namespace The_Negative_One
         {
             switch (level)
             {
+                case 0:
+                    LoadEnemies("Content/Enemies0.txt");
+                    break;
                 case 1:
                     LoadEnemies("Content/Enemies1.txt");
                     break;
@@ -129,11 +132,8 @@ namespace The_Negative_One
                 case 4:
                     LoadEnemies("Content/Enemies1.txt");
                     break;
-                case 5:
-                    LoadEnemies("Content/Enemies1.txt");
-                    break;
                 default:
-                    LoadEnemies("Content/Enemies1.txt");
+                    LoadEnemies("Content/Enemies0.txt");
                     break;
             }
             player = new Player(0, 645, 37, 41);
