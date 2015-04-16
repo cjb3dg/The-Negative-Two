@@ -55,10 +55,10 @@ namespace The_Negative_One
                     LoadFromFile("Level1.txt");
                     break;
                 case 2:
-                    LoadFromFile("Level1.txt");
+                    LoadFromFile("Level2.txt");
                     break;
                 case 3:
-                    LoadFromFile("Level1.txt");
+                    LoadFromFile("Level3.txt");
                     break;
                 case 4:
                     LoadFromFile("Level1.txt");

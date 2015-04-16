@@ -136,10 +136,10 @@ namespace The_Negative_One
                     LoadEnemies("Content/Enemies1.txt");
                     break;
                 case 2:
-                    LoadEnemies("Content/Enemies1.txt");
+                    LoadEnemies("Content/Enemies2.txt");
                     break;
                 case 3:
-                    LoadEnemies("Content/Enemies1.txt");
+                    LoadEnemies("Content/Enemies3.txt");
                     break;
                 case 4:
                     LoadEnemies("Content/Enemies1.txt");
@@ -339,10 +339,11 @@ namespace The_Negative_One
             DrawHPAndEnergy(spriteBatch);
             DrawBossHP(spriteBatch, bossList, cameraStill);
 
-            if (player.victory == true)
+/*            if (player.victory == true)
             {
                 spriteBatch.Draw(content.Load<Texture2D>("Victory"), new Rectangle(50, 50, 700, 400), Color.White);
             }
+ */
         }
 
     }
