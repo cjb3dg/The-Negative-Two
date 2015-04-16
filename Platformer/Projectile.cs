@@ -93,8 +93,12 @@ namespace The_Negative_One
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                 {
+                    e.curHP--;
+                    if (e.curHP == 0)
+                    {
+                        e.kill();
+                    }
                     alive = false;
-                    e.kill();
                 }
             }
         }
