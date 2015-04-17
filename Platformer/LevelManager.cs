@@ -11,7 +11,7 @@ namespace The_Negative_One
 {
     class LevelManager
     {
-        private InversionManager inversionManager; /* handles invertibles */
+        private InversionManager inversionManager;
         private CharacterManager characterManager;
         private ContentManager contentManager;
 

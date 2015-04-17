@@ -16,18 +16,18 @@ namespace The_Negative_One
 
         protected bool allowInversion = true; /* should be false for objects without dual-states */
 
-        protected Texture2D image_i;
-
         public override void Draw(SpriteBatch sb, int cameraX)
         {
-            if (!IsInverted)
-            {
-                sb.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-            }
-            else
-            {
-                sb.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-            }
+            DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, false);
+
+            //if (!IsInverted)
+            //{
+            //    sb.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+            //}
+            //else
+            //{
+            //    sb.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
+            //}
         }
 
         public void invert()
