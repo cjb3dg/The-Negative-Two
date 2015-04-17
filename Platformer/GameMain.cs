@@ -58,17 +58,19 @@ namespace The_Negative_One
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
-                new MenuItem("EXIT", "Exit"),
-                new MenuItem("LEVEL SELECT", "LevelSelect")
+                new MenuItem("LEVEL SELECT", "LevelSelect"),
+                new MenuItem("EXIT", "Exit")
             }, "MainMenu");
             levelMenuScreen = new MenuScreen(new List<MenuItem>
             {
                 new MenuItem("TUTORIAL", "Tutorial"),
                 new MenuItem("LEVEL 1", "LevelOne"),
-                new MenuItem("LEVEL 2", "LevelTwo")
+                new MenuItem("LEVEL 2", "LevelTwo"),
+                new MenuItem("BACK", "Back")
             }, "levelMenu");
             pauseMenu = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("RESUME", "GameScreen"),
+                new MenuItem("MAIN MENU", "Back"),
                 new MenuItem("EXIT", "Exit")
             }, "PauseMenu");
             victoryMenu = new MenuScreen(new List<MenuItem> { 
@@ -225,6 +227,10 @@ namespace The_Negative_One
                 backSong_i.Volume = 0;
                 levelManager.load(currentLevel);
                 IsGameRunning = true;
+            }
+            else if (targetScreen == "Back")
+            {
+                currentMenuScreen = mainMenuScreen;
             }
             else if (targetScreen == mainMenuScreen.Type)
             {
