@@ -28,6 +28,7 @@ namespace The_Negative_One
 
         private Screen currentMenuScreen;
         private MenuScreen mainMenuScreen;
+        private MenuScreen levelMenuScreen;
         private MenuScreen pauseMenu;
         private MenuScreen victoryMenu;
         private MenuScreen deathMenu;
@@ -57,8 +58,15 @@ namespace The_Negative_One
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
-                new MenuItem("EXIT", "Exit")
+                new MenuItem("EXIT", "Exit"),
+                new MenuItem("LEVEL SELECT", "LevelSelect")
             }, "MainMenu");
+            levelMenuScreen = new MenuScreen(new List<MenuItem>
+            {
+                new MenuItem("TUTORIAL", "Tutorial"),
+                new MenuItem("LEVEL 1", "LevelOne"),
+                new MenuItem("LEVEL 2", "LevelTwo")
+            }, "levelMenu");
             pauseMenu = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("RESUME", "GameScreen"),
                 new MenuItem("EXIT", "Exit")
@@ -108,6 +116,7 @@ namespace The_Negative_One
             backSong_i.Volume = 0;
 
             mainMenuScreen.LoadContent(Content);
+            levelMenuScreen.LoadContent(Content);
             pauseMenu.LoadContent(Content);
             victoryMenu.LoadContent(Content);
             deathMenu.LoadContent(Content);
@@ -192,6 +201,29 @@ namespace The_Negative_One
         {
             if (targetScreen == "GameScreen")
             {
+                IsGameRunning = true;
+            }
+            else if (targetScreen == "LevelSelect")
+            {
+                currentMenuScreen = levelMenuScreen;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == "Tutorial")
+            {
+                levelManager.unload();
+                currentLevel = 0;
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
+                levelManager.load(currentLevel);
+                IsGameRunning = true;
+            }
+            else if (targetScreen == "LevelOne")
+            {
+                levelManager.unload();
+                currentLevel = 1;
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
+                levelManager.load(currentLevel);
                 IsGameRunning = true;
             }
             else if (targetScreen == mainMenuScreen.Type)
