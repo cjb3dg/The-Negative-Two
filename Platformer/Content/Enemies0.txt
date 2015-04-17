@@ -103,8 +103,8 @@ endEnemy
 Boss
 5840
 580
-30
-30
+24
+22
 n
 baby_spider
 baby_spider

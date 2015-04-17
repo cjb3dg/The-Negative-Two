@@ -158,8 +158,6 @@ namespace The_Negative_One
          */
         public void setObjects(List<Sprite> objects)
         {
-            //this.objects = objects;
-
             for (int i = 0; i < objects.Count; i++)
             {
                 addObject(objects[i]);
@@ -172,13 +170,6 @@ namespace The_Negative_One
          */
         public void addObject(Sprite obj)
         {
-            //objects.Add(obj);
-
-            /* list from top of potential inheritance tree to bottom */
-            /*if (obj is Boss)
-            {
-                bosses.Add((Boss)obj);
-            }*/
             if (obj is Obstacle)
             {
                 if (((Invertible)obj).IsNeutral)
@@ -193,12 +184,7 @@ namespace The_Negative_One
                 {
                     whiteObstacles.Add((Obstacle)obj);
                 }
-
             }
-            //else if (obj is Invertible)
-            //{
-            //    inversionManager.registerInvertible((Invertible)obj);
-            //}
         }
 
         public void CameraFollow()

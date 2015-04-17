@@ -133,7 +133,7 @@ namespace The_Negative_One
             yVList.Add(-1);
 
             MovementPattern spiderPattern = new MovementPattern(xVList, yVList);
-            Enemy spider = new Enemy(this.getX(), this.getY(), 75, 75, content.Load<Texture2D>("smallSpider"), content.Load<Texture2D>("smallSpider_i"), 1, 1, spiderPattern);
+            Enemy spider = new Enemy(this.getX(), this.getY(), 24, 22, content.Load<Texture2D>("smallSpider"), content.Load<Texture2D>("smallSpider_i"), 1, 1, spiderPattern);
             eList.Add(spider);
         }
 
