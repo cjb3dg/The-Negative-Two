@@ -142,10 +142,9 @@ namespace The_Negative_One
         public void LoadContent(ContentManager content)
         {
             {
-                spriteSheet = content.Load<Texture2D>("neggy_spritesheet.png");
-                spriteSheet_i = content.Load<Texture2D>("neggy_spritesheet_i.png");
-                frameHeight = 41;
-                frameWidth = 37;
+                image = content.Load<Texture2D>("neggy_spritesheet.png");
+                image_i = content.Load<Texture2D>("neggy_spritesheet_i.png");
+                totalFrames = 2;
             }
         }
 

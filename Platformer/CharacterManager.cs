@@ -47,8 +47,9 @@ namespace The_Negative_One
                     int y = Convert.ToInt32(file.ReadLine());
                     int width = Convert.ToInt32(file.ReadLine());
                     int height = Convert.ToInt32(file.ReadLine());
-                    Texture2D normal = content.Load<Texture2D>(file.ReadLine());
-                    Texture2D inverted = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D image = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D image_i = content.Load<Texture2D>(file.ReadLine());
+                    int totalFrames = Convert.ToInt32(file.ReadLine());
                     int curHP = Convert.ToInt32(file.ReadLine());
                     MovementPattern mPattern;
                     List<double> xVList = new List<double>();
@@ -62,7 +63,7 @@ namespace The_Negative_One
                     }
                     mPattern = new MovementPattern(xVList, yVList);
 
-                    Enemy newEnemy = new Enemy(x, y, width, height, normal, inverted, curHP, mPattern);
+                    Enemy newEnemy = new Enemy(x, y, width, height, image, image_i, totalFrames, curHP, mPattern);
                     enemyList.Add(newEnemy);
                     invManager.registerInvertible(newEnemy);
                 }
@@ -74,8 +75,9 @@ namespace The_Negative_One
                     int width = Convert.ToInt32(file.ReadLine());
                     int height = Convert.ToInt32(file.ReadLine());
                     String color = file.ReadLine();
-                    Texture2D normal = content.Load<Texture2D>(file.ReadLine());
-                    Texture2D inverted = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D image = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D image_i = content.Load<Texture2D>(file.ReadLine());
+                    int totalFrames = Convert.ToInt32(file.ReadLine());
                     int maxHP = Convert.ToInt32(file.ReadLine());
                     MovementPattern mPattern;
                     List<MovementPattern> mPList = new List<MovementPattern>();
@@ -113,7 +115,7 @@ namespace The_Negative_One
                         neutral = true;
                     }
 
-                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player, invert, neutral, false);
+                    Boss newBoss = new Boss(x, y, width, height, image, image_i, totalFrames, maxHP, mPList, player, invert, neutral, false);
                     bossList.Add(newBoss);
                 }
 
@@ -341,12 +343,6 @@ namespace The_Negative_One
 
             DrawHPAndEnergy(spriteBatch);
             DrawBossHP(spriteBatch, bossList, cameraStill);
-
-/*            if (player.victory == true)
-            {
-                spriteBatch.Draw(content.Load<Texture2D>("Victory"), new Rectangle(50, 50, 700, 400), Color.White);
-            }
- */
         }
 
     }

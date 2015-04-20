@@ -14,25 +14,27 @@ namespace The_Negative_One
         public double yVel;
         public int mIter;
         private bool alive;
+        private bool IsRight;
 
         public const double delay = .5;
         public double remainingDelay;
 
-        public Enemy(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int curHP, MovementPattern mPattern) //Moving Constructor
+        public Enemy(int x, int y, int width, int height, Texture2D image, Texture2D image_i, int totalFrames, int curHP, MovementPattern mPattern) //Moving Constructor
         {
             this.spriteX = x;
             this.spriteY = y;
             this.spriteWidth = width;
             this.spriteHeight = height;
-            this.image = normal;
-            this.image_i = inverted;
+            this.image = image;
+            this.image_i = image_i;
             this.curHP = curHP;
             this.mPattern = mPattern;
             this.remainingDelay = .5;
             this.alive = true;
             this.xVel = mPattern.xVList[0];
             this.yVel = mPattern.xVList[0];
-
+            this.totalFrames = totalFrames;
+            this.frameTime = 0.25f;
         }
 
         public Enemy(Enemy e) //Copy Constructor
@@ -46,6 +48,8 @@ namespace The_Negative_One
             this.curHP = e.curHP;
             this.mPattern = e.mPattern;
             this.alive = e.alive;
+            this.totalFrames = e.totalFrames;
+            this.frameTime = e.frameTime;
         }
 
 
@@ -64,6 +68,15 @@ namespace The_Negative_One
             }
             this.spriteX += Convert.ToInt32(xVel);
             this.spriteY += Convert.ToInt32(yVel);
+
+            IsRight = this.xVel >= 0;
+
+            UpdateAnimation(gameTime, true, true);
+        }
+
+        public override void Draw(SpriteBatch sb, int cameraX)
+        {
+            DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, !IsRight);
         }
 
         public int getX()

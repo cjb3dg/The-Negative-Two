@@ -5,6 +5,7 @@ Enemy
 15
 3spikes
 3spikes_i
+1
 9999
 0
 0
@@ -16,6 +17,7 @@ Enemy
 15
 3spikes
 3spikes_i
+1
 9999
 0
 0
@@ -27,6 +29,7 @@ Enemy
 15
 3spikes
 3spikes_i
+1
 9999
 0
 0
@@ -38,6 +41,7 @@ Enemy
 15
 21spikes
 21spikes_i
+1
 9999
 0
 0
@@ -49,6 +53,7 @@ Enemy
 15
 21spikes
 21spikes_i
+1
 9999
 0
 0
@@ -60,6 +65,7 @@ Enemy
 15
 21spikes
 21spikes_i
+1
 9999
 0
 0
@@ -69,8 +75,9 @@ Enemy
 580
 39
 40
-butterfly
-butterfly_i
+butterfly_spritesheet
+butterfly_i_spritesheet
+3
 1
 2.0
 0.0
