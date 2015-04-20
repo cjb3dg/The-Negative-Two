@@ -53,7 +53,7 @@ namespace The_Negative_One
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
 
-            currentLevel = 0;
+            currentLevel = 2;
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
@@ -154,7 +154,7 @@ namespace The_Negative_One
                 {
                     levelManager.Update(controls, gameTime);
 
-                    if (controls.onPress(Keys.Space, Buttons.A))
+                    if (controls.onPress(Keys.Space, Buttons.LeftTrigger))
                     {
                         float x = backSong_i.Volume;
                         backSong_i.Volume = backSong.Volume;
@@ -163,7 +163,7 @@ namespace The_Negative_One
 
                     base.Update(gameTime);
                 }
-            } else {
+             } else {
                 currentMenuScreen.Update(this, controls);
             }
         }
