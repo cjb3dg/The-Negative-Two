@@ -48,12 +48,13 @@ namespace The_Negative_One
             graphics.PreferredBackBufferHeight = 720;   // set this value to the desired height of your window
             graphics.ApplyChanges();
 
+
             inversionManager = new InversionManager();
             characterManager = new CharacterManager(levelManager, inversionManager, Content);
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
 
-            currentLevel = 0;
+            currentLevel = 2;
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
@@ -86,6 +87,11 @@ namespace The_Negative_One
             Joystick.Init();
             Console.WriteLine("Number of joysticks: " + Sdl.SDL_NumJoysticks());
             controls = new Controls();
+
+            Type type = typeof(OpenTKGameWindow);
+            System.Reflection.FieldInfo field = type.GetField("window", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            OpenTK.GameWindow window = (OpenTK.GameWindow)field.GetValue(this.Window);
+            this.Window.SetPosition(new Point(0,0));
         }
 
         /// <summary>
@@ -96,6 +102,7 @@ namespace The_Negative_One
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             // TODO: use this.Content to load your game content here
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
             song = this.Content.Load<SoundEffect>("HawkeTheme");
             song_i = this.Content.Load<SoundEffect>("HawkeTheme_i");
@@ -112,7 +119,7 @@ namespace The_Negative_One
             victoryMenu.LoadContent(Content);
             deathMenu.LoadContent(Content);
 
-            levelManager.load(currentLevel);
+            levelManager.load(currentLevel, true);
         }
 
         /// <summary>
@@ -132,6 +139,7 @@ namespace The_Negative_One
         protected override void Update(GameTime gameTime)
         {
             //set our keyboardstate tracker update can change the gamestate on every cycle
+            
             controls.Update();
 
             if (characterManager.player.victory)
@@ -219,7 +227,7 @@ namespace The_Negative_One
                 levelManager.unload();
                 backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
                 backSong_i.Volume = 0;
-                levelManager.load(currentLevel);
+                levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
             else if (targetScreen == "NextLevelScreen")
@@ -228,7 +236,7 @@ namespace The_Negative_One
                 currentLevel++;
                 backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
                 backSong_i.Volume = 0;
-                levelManager.load(currentLevel);
+                levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
             else if (targetScreen == "Exit") // TODO: next level stuff
