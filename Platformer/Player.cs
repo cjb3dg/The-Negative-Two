@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
+using Microsoft.Xna.Framework.Audio;
 
 namespace The_Negative_One
 {
@@ -35,6 +36,10 @@ namespace The_Negative_One
         public int energyRecover;
         private int floorHeight = 800;
         private bool moving = false;
+
+        private static SoundEffect hitSound;
+        private static SoundEffect shootSound;
+        private static SoundEffect healSound;
 
         public Player(int x, int y, int width, int height, int health)
         {
@@ -147,6 +152,10 @@ namespace The_Negative_One
                 image = content.Load<Texture2D>("neggy_spritesheet.png");
                 image_i = content.Load<Texture2D>("neggy_spritesheet_i.png");
                 totalFrames = 2;
+
+                hitSound = content.Load<SoundEffect>("Hit");
+                shootSound = content.Load<SoundEffect>("Shoot");
+                healSound = content.Load<SoundEffect>("heal");
             }
         }
 
@@ -265,6 +274,8 @@ namespace The_Negative_One
                     {
                         curHP -= 50;
                         invulnerability = 30;
+
+                        hitSound.Play();
                     }
                 }
             }
@@ -284,6 +295,8 @@ namespace The_Negative_One
                             curHP = maxHP;
                         }
                         e.remove();
+
+                        healSound.Play();
                     }
                 }
             }
@@ -304,6 +317,8 @@ namespace The_Negative_One
                     {
                         curHP -= healthDecrease;
                         invulnerability = 30;
+
+                        hitSound.Play();
                     }
                 }
             }
@@ -321,6 +336,8 @@ namespace The_Negative_One
                         {
                             curHP -= 100;
                             invulnerability = 30;
+
+                            hitSound.Play();
                         }
                     }
                 }
@@ -373,6 +390,7 @@ namespace The_Negative_One
             if (controls.onPress(Keys.S, Buttons.RightTrigger) && cooldown == 0)
             {
                 cooldown = 20;
+                shootSound.Play();
                 return true;
             }
             return false;

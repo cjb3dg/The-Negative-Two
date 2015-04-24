@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using Microsoft.Xna.Framework.Audio;
 
 namespace The_Negative_One
 {
@@ -27,6 +28,9 @@ namespace The_Negative_One
         private int cameraX;
         private bool cameraStill;
         private int bossCameraX;
+
+        private static SoundEffect bossMusic;
+        private static SoundEffectInstance bossMusicInstance;
 
         public LevelManager(InversionManager inversionManager, CharacterManager characterManager, ContentManager contentManager)
         {
@@ -68,6 +72,9 @@ namespace The_Negative_One
                     break;
             }
             characterManager.Load(level, replenishHealth);
+
+            bossMusic = contentManager.Load<SoundEffect>("NightRunner");
+            bossMusicInstance = bossMusic.CreateInstance();
         }
 
         public void LoadFromFile(String filename)
@@ -290,6 +297,7 @@ namespace The_Negative_One
             if (characterManager.bossDead())
             {
                 door.setActive(true);
+                bossMusicInstance.Stop();
             }
 
             items.RemoveAll(i => !i.isAlive());
@@ -301,6 +309,11 @@ namespace The_Negative_One
             if (cameraX > bossCameraX)
             {
                 CameraStill();
+
+                if (!characterManager.bossDead())
+                {
+                    bossMusicInstance.Play();
+                }
             }
         }
     }
