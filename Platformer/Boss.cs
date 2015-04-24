@@ -19,6 +19,10 @@ namespace The_Negative_One
         public int mLIter = 0; //Iterator for mPList
         private bool alive;
 
+        public Texture2D pTexture;
+        public Texture2D pTexture_i;
+
+
         public bool active;
 
         public int state = 1;
@@ -29,10 +33,10 @@ namespace The_Negative_One
         private double delay = .5;
         private double remDelay = .5;
 
+        public bool shoot = false;
+
         private double projDelay = 2;
         private double remPDelay = 2;
-
-        private int cooldown = 50;
 
         Random rnd = new Random();
 
@@ -97,7 +101,6 @@ namespace The_Negative_One
             }
             UpdateTarget(player1);
             UpdateState();
-            this.cooldown--;
             this.remDelay -= gameTime.ElapsedGameTime.TotalSeconds;
             this.remPDelay -= gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -113,6 +116,7 @@ namespace The_Negative_One
                     this.mLIter = x;
                     this.xVel = 0;
                     this.yVel = 0;
+                    this.shoot = false;
                     this.curMPattern = this.mPList[mLIter];
 
                 }
@@ -121,6 +125,7 @@ namespace The_Negative_One
                 {
                     this.xVel = this.curMPattern.xVList[this.mIter];
                     this.yVel = this.curMPattern.yVList[this.mIter];
+                    this.shoot = this.curMPattern.shootList[this.mIter];
                     this.mIter = this.mIter + 1;
 
                 }
@@ -137,7 +142,7 @@ namespace The_Negative_One
             }
         }
 
-        public void spawnSpider(List<Enemy> eList, ContentManager content)
+/*        public void spawnSpider(List<Enemy> eList, ContentManager content)
         {
             List<double> xVList = new List<double>();
             List<double> yVList = new List<double>();
@@ -150,16 +155,7 @@ namespace The_Negative_One
             Enemy spider = new Enemy(this.getX(), this.getY(), 24, 22, content.Load<Texture2D>("smallSpider"), content.Load<Texture2D>("smallSpider_i"), 1, 1, spiderPattern);
             eList.Add(spider);
         }
-
-        public bool Shoot(Microsoft.Xna.Framework.GameTime gameTime)
-        {
-            if (cooldown == 0)
-            {
-                cooldown = 50;
-                return true;
-            }
-            return false;
-        }
+*/
 
         public int getX()
         {
@@ -209,6 +205,13 @@ namespace The_Negative_One
         public void setState(int state)
         {
             this.state = state;
+        }
+
+        public void setPTexture(Texture2D pTexture, Texture2D pTexture_i)
+        {
+            this.pTexture = pTexture;
+            this.pTexture_i = pTexture_i;
+
         }
 
         public void kill()
