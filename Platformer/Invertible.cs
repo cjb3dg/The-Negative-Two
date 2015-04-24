@@ -19,15 +19,6 @@ namespace The_Negative_One
         public override void Draw(SpriteBatch sb, int cameraX)
         {
             DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, false);
-
-            //if (!IsInverted)
-            //{
-            //    sb.Draw(image, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-            //}
-            //else
-            //{
-            //    sb.Draw(image_i, new Rectangle(spriteX - cameraX, spriteY, spriteWidth, spriteHeight), Color.White);
-            //}
         }
 
         public void invert()

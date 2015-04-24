@@ -44,30 +44,30 @@ namespace The_Negative_One
             //this.cameraX = -350;
         }
 
-        public void load(int level)
+        public void load(int level, bool replenishHealth)
         {
             switch (level)
             {
                 case 0:
-                    LoadFromFile("Level0.txt");
+                    LoadFromFile("Content/Level0.txt");
                     break;
                 case 1:
-                    LoadFromFile("Level1.txt");
+                    LoadFromFile("Content/Level1.txt");
                     break;
                 case 2:
-                    LoadFromFile("Level2.txt");
+                    LoadFromFile("Content/Level2.txt");
                     break;
                 case 3:
-                    LoadFromFile("Level3.txt");
+                    LoadFromFile("Content/Level3.txt");
                     break;
                 case 4:
-                    LoadFromFile("Level1.txt");
+                    LoadFromFile("Content/Level1.txt");
                     break;
                 default:
-                    LoadFromFile("Level0.txt");
+                    LoadFromFile("Content/Level0.txt");
                     break;
             }
-            characterManager.Load(level);
+            characterManager.Load(level, replenishHealth);
         }
 
         public void LoadFromFile(String filename)
@@ -114,7 +114,7 @@ namespace The_Negative_One
                         else if (divided[0].Equals("d"))
                         {
                             this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex, false);
-                            this.door.setNeutral();
+                            //this.door.setNeutral();
                         }
                         else if (divided[0].Equals("i"))
                         {

@@ -63,7 +63,6 @@ namespace The_Negative_One
 
             this.targetX = player1.getX() + player1.getWidth() / 2 + 15;
             this.targetY = player1.getY() + player1.getHeight() / 2 + 15;
-
         }
 
         public Boss() //Null Constructor
@@ -140,6 +139,7 @@ namespace The_Negative_One
                 //Create Projectile here
                 remPDelay = projDelay;
             }
+            this.UpdateAnimation(gameTime, true, true);
         }
 
 /*        public void spawnSpider(List<Enemy> eList, ContentManager content)
