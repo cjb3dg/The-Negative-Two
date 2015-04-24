@@ -222,7 +222,7 @@ namespace The_Negative_One
             }
             foreach (Projectile p in projectileList)
             {
-                p.Update(oList, ref visibleEnemyList, ref activeBossList, cameraX, player);
+                p.Update(oList, ref visibleEnemyList, ref activeBossList, cameraX, player, gametime);
             }
 
             projectileList.RemoveAll(p => !p.isAlive());
@@ -236,14 +236,16 @@ namespace The_Negative_One
             {
                 double projectileXVel = 8;
                 int projectileX = player.getWidth();
-                int projectileY = 25;
+                int projectileY = 16;
                 if (!player.facingRight())
                 {
                     projectileXVel = -8;
 
                     projectileX = -4;
                 }
-                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 12, 6, content.Load<Texture2D>("player_projectile"), content.Load<Texture2D>("player_projectile"), projectileXVel, 0, true));
+                Projectile proj = new Projectile(player.getX() + projectileX/2, player.getY() + projectileY, 23, 22, content.Load<Texture2D>("player_projectile"), content.Load<Texture2D>("player_projectile_i"), projectileXVel, 0, true, 2, player.IsInverted);
+                projectileList.Add(proj);
+                invManager.registerInvertible(proj);
             }
 
             foreach (Boss b in bossList)
@@ -260,7 +262,7 @@ namespace The_Negative_One
                     //int projectileY = 18;
                     int pWidth = b.pTexture.Width;
                     int pHeight = b.pTexture.Height;
-                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - pWidth/2, b.getY() + b.getHeight()/3 - pHeight/2, b.pTexture.Width, b.pTexture.Height, b.pTexture, b.pTexture_i, projectileXVel, projectileYVel, false));
+                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - pWidth/2, b.getY() + b.getHeight()/3 - pHeight/2, b.pTexture.Width, b.pTexture.Height, b.pTexture, b.pTexture_i, projectileXVel, projectileYVel, false, 1, false));
                     b.shoot = false;
                 }
             }

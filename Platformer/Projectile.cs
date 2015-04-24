@@ -15,7 +15,7 @@ namespace The_Negative_One
         private bool alive;
         private bool friendly;
 
-        public Projectile(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, double x_vel, double y_vel, bool friendly)
+        public Projectile(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, double x_vel, double y_vel, bool friendly, int totalFrames, bool isInverted)
         {
             this.spriteX = x;
             this.spriteY = y;
@@ -27,9 +27,11 @@ namespace The_Negative_One
             this.y_vel = y_vel;
             this.alive = true;
             this.friendly = friendly;
+            this.totalFrames = totalFrames;
+            this.IsInverted = isInverted;
         }
 
-        public void Update(List<Obstacle> oList, ref List<Enemy> eList, ref List<Boss> bList, int cameraX, Player player)
+        public void Update(List<Obstacle> oList, ref List<Enemy> eList, ref List<Boss> bList, int cameraX, Player player, GameTime gametime)
         {
             spriteX += (int)x_vel;
             spriteY += (int)y_vel;
@@ -38,6 +40,12 @@ namespace The_Negative_One
             checkEnemyCollisions(ref eList);
             checkBossCollisions(ref bList);
             checkBounds(cameraX);
+            UpdateAnimation(gametime, true, true);
+        }
+
+        public override void Draw(SpriteBatch sb, int cameraX)
+        {
+            DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, x_vel <= 0);
         }
 
         public void setX(int x)
