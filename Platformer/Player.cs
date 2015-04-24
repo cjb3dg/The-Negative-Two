@@ -25,6 +25,7 @@ namespace The_Negative_One
         private bool alive = true;
         private bool right = true;
         private int cooldown;
+        private int invCooldown;
         private int invulnerability;
         public int maxHP;
         public int curHP;
@@ -35,7 +36,7 @@ namespace The_Negative_One
         private int floorHeight = 800;
         private bool moving = false;
 
-        public Player(int x, int y, int width, int height)
+        public Player(int x, int y, int width, int height, int health)
         {
             this.spriteX = x;
             this.spriteY = y;
@@ -43,12 +44,13 @@ namespace The_Negative_One
             this.spriteHeight = height;
 
             this.maxHP = 1000;
-            this.curHP = 1000;
+            this.curHP = health;
             this.maxEnergy = 300;
             this.curEnergy = 300;
             this.energyCost = 100;
             this.energyRecover = 1;
             this.cooldown = 0;
+            this.invCooldown = 0;
             this.invulnerability = 0;
 
             floorHeight -= this.spriteHeight;
@@ -142,10 +144,9 @@ namespace The_Negative_One
         public void LoadContent(ContentManager content)
         {
             {
-                spriteSheet = content.Load<Texture2D>("neggy_spritesheet.png");
-                spriteSheet_i = content.Load<Texture2D>("neggy_spritesheet_i.png");
-                frameHeight = 41;
-                frameWidth = 37;
+                image = content.Load<Texture2D>("neggy_spritesheet.png");
+                image_i = content.Load<Texture2D>("neggy_spritesheet_i.png");
+                totalFrames = 2;
             }
         }
 
@@ -164,22 +165,14 @@ namespace The_Negative_One
 
         public void Invert(Controls controls, InversionManager inv)
         {
-            if (controls.onPress(Keys.Space, Buttons.LeftTrigger) && curEnergy >= energyCost)
+            if (controls.onPress(Keys.Space, Buttons.LeftTrigger) && invCooldown <= 0)
             {
                 inv.invert();
-                curEnergy -= energyCost;
-            }
-            if (curEnergy < maxEnergy)
-            {
-                curEnergy += energyRecover;
-            }
-            else
-            {
-                curEnergy = maxEnergy;
+                invCooldown = 12;
             }
         }
 
-        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, List<Projectile> pList, Door door, bool cameraStill, int cameraX)
+        public int Move(Controls controls, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, List<Projectile> pList, Door door, bool cameraStill, int cameraX, InversionManager inv)
         {
             int oldX = spriteX;
 
@@ -223,7 +216,7 @@ namespace The_Negative_One
 
             // Check up/down collisions, then left/right
             checkObstacleCollisions(oList);
-            checkEnemyCollisions(eList);
+            checkEnemyCollisions(eList, inv);
             checkBossCollisions(bList, cameraStill);
             checkItemCollisions(iList);
             checkProjectileCollisions(pList);
@@ -296,15 +289,20 @@ namespace The_Negative_One
             }
         }
 
-        private void checkEnemyCollisions(List<Enemy> eList)
+        private void checkEnemyCollisions(List<Enemy> eList, InversionManager inv)
         {
             foreach (Enemy e in eList)
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                 {
+                    int healthDecrease = 50;
+                    if (!e.IsActive(inv))
+                    {
+                        healthDecrease = 10;
+                    }
                     if (invulnerability <= 0)
                     {
-                        curHP -= 50;
+                        curHP -= healthDecrease;
                         invulnerability = 30;
                     }
                 }
@@ -347,12 +345,12 @@ namespace The_Negative_One
                         spriteY = o.getY() + o.getHeight();
                         y_vel = 0;
                     }
-                    if (spriteX + spriteWidth <= o.getX() + x_vel && x_vel > 0)
+                    if (spriteX + spriteWidth <= o.getX() + x_vel && x_vel > 0 && spriteY + spriteHeight > o.getY() && spriteY < o.getY() + o.getHeight())
                     {
                         spriteX = o.getX() - spriteWidth;
                         x_vel = 0;
                     }
-                    if (spriteX >= o.getX() + o.getWidth() + x_vel && x_vel < 0)
+                    if (spriteX >= o.getX() + o.getWidth() + x_vel && x_vel < 0 && spriteY + spriteHeight > o.getY() && spriteY < o.getY() + o.getHeight())
                     {
                         spriteX = o.getX() + o.getWidth();
                         x_vel = 0;
@@ -372,7 +370,7 @@ namespace The_Negative_One
 
         public bool Shoot(Controls controls)
         {
-            if (controls.onPress(Keys.Enter, Buttons.RightTrigger) && cooldown == 0)
+            if (controls.onPress(Keys.S, Buttons.RightTrigger) && cooldown == 0)
             {
                 cooldown = 20;
                 return true;
@@ -398,12 +396,16 @@ namespace The_Negative_One
 
         public int Update(Controls controls, GameTime gameTime, List<Obstacle> oList, List<Enemy> eList, List<Boss> bList, List<Item> iList, List<Projectile> pList, InversionManager inv, Door door, bool cameraStill, int cameraX)
         {
-            int retVal = Move(controls, oList, eList, bList, iList, pList, door, cameraStill, cameraX);
+            int retVal = Move(controls, oList, eList, bList, iList, pList, door, cameraStill, cameraX, inv);
             Jump(controls, gameTime);
             Invert(controls, inv);
             if (cooldown > 0)
             {
                 cooldown--;
+            }
+            if (invCooldown > 0)
+            {
+                invCooldown--;
             }
             CheckDeath();
             UpdateAnimation(gameTime, moving, grounded);

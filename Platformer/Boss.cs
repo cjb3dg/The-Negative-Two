@@ -34,14 +34,17 @@ namespace The_Negative_One
 
         private int cooldown = 50;
 
-        public Boss(int x, int y, int width, int height, Texture2D normal, Texture2D inverted, int maxHP, List<MovementPattern> mPList, Player player1, bool inv, bool neutral, bool active) //Moving Constructor
+        Random rnd = new Random();
+
+        public Boss(int x, int y, int width, int height, Texture2D image, Texture2D image_i, int totalFrames, int maxHP, List<MovementPattern> mPList, Player player1, bool inv, bool neutral, bool active) //Moving Constructor
         {
             this.spriteX = x;
             this.spriteY = y;
             this.spriteWidth = width;
             this.spriteHeight = height;
-            this.image = normal;
-            this.image_i = inverted;
+            this.image = image;
+            this.image_i = image_i;
+            this.totalFrames = totalFrames;
             this.maxHP = maxHP;
             this.curHP = maxHP;
             this.mPList = mPList;
@@ -54,8 +57,12 @@ namespace The_Negative_One
 
             this.curMPattern = mPList[0];
 
-            this.targetX = player1.getX() + player1.getWidth() / 2;
-            this.targetY = player1.getY() + player1.getHeight() / 2;
+            this.targetX = player1.getX() + player1.getWidth() / 2 + 15;
+            this.targetY = player1.getY() + player1.getHeight() / 2 + 15;
+        }
+
+        public Boss() //Null Constructor
+        {
 
         }
 
@@ -67,8 +74,8 @@ namespace The_Negative_One
 
         public void UpdateTarget(Player player1)
         {
-            this.targetX = player1.getX() + player1.getWidth() / 2;
-            this.targetY = player1.getY() + player1.getHeight() / 2;
+            this.targetX = player1.getX() + player1.getWidth() / 2 + 15;
+            this.targetY = player1.getY() + player1.getHeight() / 2 + 15;
         }
 
         public void UpdateState()
@@ -83,6 +90,10 @@ namespace The_Negative_One
 
         public void Update(Microsoft.Xna.Framework.GameTime gameTime, Player player1, List<Enemy> eList, ContentManager content)
         {
+            if (this.curHP == 0)
+            {
+                this.kill();
+            }
             UpdateTarget(player1);
             UpdateState();
             this.cooldown--;
@@ -91,12 +102,14 @@ namespace The_Negative_One
 
             if (remDelay <= 0)
             {
+
                 if (this.mIter + 1 > this.curMPattern.xVList.Count)
                 {
                     //spawnSpider(eList, content);
 
                     this.mIter = 0;
-                    this.mLIter = (this.mLIter + 1) % this.mPList.Count;
+                    int x = rnd.Next(0, this.mPList.Count);
+                    this.mLIter = x;
                     this.xVel = 0;
                     this.yVel = 0;
                     this.curMPattern = this.mPList[mLIter];
@@ -121,6 +134,7 @@ namespace The_Negative_One
                 //Create Projectile here
                 remPDelay = projDelay;
             }
+            this.UpdateAnimation(gameTime, true, true);
         }
 
         public void spawnSpider(List<Enemy> eList, ContentManager content)
@@ -133,7 +147,7 @@ namespace The_Negative_One
             yVList.Add(-1);
 
             MovementPattern spiderPattern = new MovementPattern(xVList, yVList);
-            Enemy spider = new Enemy(this.getX(), this.getY(), 75, 75, content.Load<Texture2D>("smallSpider"), content.Load<Texture2D>("smallSpider_i"), 1, spiderPattern);
+            Enemy spider = new Enemy(this.getX(), this.getY(), 24, 22, content.Load<Texture2D>("smallSpider"), content.Load<Texture2D>("smallSpider_i"), 1, 1, spiderPattern);
             eList.Add(spider);
         }
 

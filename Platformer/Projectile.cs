@@ -144,7 +144,7 @@ namespace The_Negative_One
         {
             foreach (Obstacle o in oList)
             {
-                if (!(spriteX + spriteWidth < o.getX() || spriteX > o.getX() + o.getWidth() || spriteY + spriteHeight < o.getY() || spriteY > o.getY() + o.getHeight()))
+                if (!(spriteX + spriteWidth < o.getX() + 2 || spriteX > o.getX() + o.getWidth() - 2 || spriteY + spriteHeight < o.getY() + 2 || spriteY > o.getY() + o.getHeight() - 2))
                 {
                     alive = false;
                 }
