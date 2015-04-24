@@ -197,7 +197,7 @@ namespace The_Negative_One
             this.cameraStill = true;
         }
 
-        public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
+        public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice, InversionManager inv)
         {
             inversionManager.Draw(sb, graphicsDevice);
             if (door.isActive())
@@ -229,7 +229,7 @@ namespace The_Negative_One
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
-            characterManager.Draw(sb, cameraX, cameraStill);
+            characterManager.Draw(sb, cameraX, cameraStill, inv);
         }
 
         public void MoveCamera(int movement)

@@ -329,7 +329,7 @@ namespace The_Negative_One
             return (bossList.Count == 0);
         }
 
-        public void Draw(SpriteBatch spriteBatch, int cameraX, bool cameraStill)
+        public void Draw(SpriteBatch spriteBatch, int cameraX, bool cameraStill, InversionManager inv)
         {
             foreach (Enemy e in enemyList)
             {
@@ -339,7 +339,7 @@ namespace The_Negative_One
             {
                 foreach (Boss b in bossList)
                 {
-                    b.Draw(spriteBatch, cameraX);
+                    b.Draw(spriteBatch, cameraX, inv);
                 }
             }
             if (player.isAlive())

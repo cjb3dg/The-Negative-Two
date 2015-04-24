@@ -147,9 +147,17 @@ namespace The_Negative_One
             this.UpdateAnimation(gameTime, true, true);
         }
 
-        public override void Draw(SpriteBatch sb, int cameraX)
+        public void Draw(SpriteBatch sb, int cameraX, InversionManager inv)
         {
+            if (!this.IsInverted && inv.IsWorldInverted)
+            {
             DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, !IsRight);
+            }
+
+            if (this.IsInverted && !inv.IsWorldInverted)
+            {
+                DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, !IsRight);
+            }
         }
 /*        public void spawnSpider(List<Enemy> eList, ContentManager content)
         {
