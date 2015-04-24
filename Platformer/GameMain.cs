@@ -38,10 +38,8 @@ namespace The_Negative_One
         private bool IsGameRunning = false;
         private int currentLevel;
 
-        private static SoundEffect song;
-        private static SoundEffect song_i;
-        private static SoundEffectInstance backSong;
-        private static SoundEffectInstance backSong_i;
+        //private SoundEffect backgroundMusic;
+        //private SoundEffectInstance backgroundMusicInstance;
 
         public GameMain()
         {
@@ -125,15 +123,6 @@ namespace The_Negative_One
             // TODO: use this.Content to load your game content here
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            song = this.Content.Load<SoundEffect>("HawkeTheme");
-            song_i = this.Content.Load<SoundEffect>("HawkeTheme_i");
-            backSong = song.CreateInstance();
-            backSong_i = song_i.CreateInstance();
-            backSong.IsLooped = true;
-            backSong_i.IsLooped = true;
-            backSong.Play();
-            backSong_i.Play();
-            backSong_i.Volume = 0;
 
             mainMenuScreen.LoadContent(Content);
             levelMenuScreen.LoadContent(Content);
@@ -141,6 +130,12 @@ namespace The_Negative_One
             victoryMenu.LoadContent(Content);
             deathMenu.LoadContent(Content);
             winMenu.LoadContent(Content);
+
+            //backgroundMusic = Content.Load<SoundEffect>("TimePassingBy");
+            //backgroundMusicInstance = backgroundMusic.CreateInstance();
+            //backgroundMusicInstance.IsLooped = true;
+            //backgroundMusicInstance.Volume = 0.02f;
+            //backgroundMusicInstance.Play();
 
             levelManager.load(currentLevel, true);
         }
@@ -185,13 +180,6 @@ namespace The_Negative_One
                 {
                     levelManager.Update(controls, gameTime);
 
-                    if (controls.onPress(Keys.Space, Buttons.LeftTrigger))
-                    {
-                        float x = backSong_i.Volume;
-                        backSong_i.Volume = backSong.Volume;
-                        backSong.Volume = x;
-                    }
-
                     base.Update(gameTime);
                 }
              } else {
@@ -209,7 +197,7 @@ namespace The_Negative_One
 
             if (IsGameRunning)
             {
-                levelManager.Draw(spriteBatch, GraphicsDevice);
+                levelManager.Draw(spriteBatch, GraphicsDevice, inversionManager);
             } else {
                 currentMenuScreen.Draw(spriteBatch, GraphicsDevice);
             }
@@ -234,8 +222,6 @@ namespace The_Negative_One
             {
                 levelManager.unload();
                 currentLevel = 0;
-                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
-                backSong_i.Volume = 0;
                 levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
@@ -243,8 +229,6 @@ namespace The_Negative_One
             {
                 levelManager.unload();
                 currentLevel = 1;
-                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
-                backSong_i.Volume = 0;
                 levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
@@ -252,8 +236,6 @@ namespace The_Negative_One
             {
                 levelManager.unload();
                 currentLevel = 2;
-                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
-                backSong_i.Volume = 0;
                 levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
@@ -285,14 +267,12 @@ namespace The_Negative_One
             else if (targetScreen == "SameLevelScreen")
             {
                 levelManager.unload();
-                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
-                backSong_i.Volume = 0;
                 levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
             else if (targetScreen == "NextLevelScreen")
             {
-                if (currentLevel == 0)
+                if (currentLevel == 3)
                 {
                     currentMenuScreen = winMenu;
                     IsGameRunning = false;
@@ -310,6 +290,10 @@ namespace The_Negative_One
             else if (targetScreen == "Credits")
             {
                 currentMenuScreen = credits;
+                levelManager.unload();
+                currentLevel++;
+                levelManager.load(currentLevel, true);
+                IsGameRunning = true;
             }
             else if (targetScreen == "Exit")
             {

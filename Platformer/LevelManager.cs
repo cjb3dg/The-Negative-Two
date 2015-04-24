@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using Microsoft.Xna.Framework.Audio;
 
 namespace The_Negative_One
 {
@@ -27,6 +28,9 @@ namespace The_Negative_One
         private int cameraX;
         private bool cameraStill;
         private int bossCameraX;
+
+        private static SoundEffect bossMusic;
+        private static SoundEffectInstance bossMusicInstance;
 
         public LevelManager(InversionManager inversionManager, CharacterManager characterManager, ContentManager contentManager)
         {
@@ -68,6 +72,9 @@ namespace The_Negative_One
                     break;
             }
             characterManager.Load(level, replenishHealth);
+
+            bossMusic = contentManager.Load<SoundEffect>("NightRunner");
+            bossMusicInstance = bossMusic.CreateInstance();
         }
 
         public void LoadFromFile(String filename)
@@ -76,6 +83,8 @@ namespace The_Negative_One
             Texture2D platformBlack = contentManager.Load<Texture2D>("Platform_black");
             Texture2D platformWhite = contentManager.Load<Texture2D>("Platform_white");
             Texture2D doorTex = contentManager.Load<Texture2D>("door");
+            Texture2D doorTex_i = contentManager.Load<Texture2D>("door_i");
+
 
             this.cameraX = -655;
             this.cameraStill = false;
@@ -113,7 +122,7 @@ namespace The_Negative_One
                         }
                         else if (divided[0].Equals("d"))
                         {
-                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex, doorTex, false);
+                            this.door = new Door(Convert.ToInt32(divided[1]), Convert.ToInt32(divided[2]), Convert.ToInt32(divided[3]), Convert.ToInt32(divided[4]), doorTex_i, doorTex, false);
                             //this.door.setNeutral();
                         }
                         else if (divided[0].Equals("i"))
@@ -136,6 +145,8 @@ namespace The_Negative_One
                 inversionManager.registerInvertible(i);
             }
 
+            inversionManager.registerInvertible(door);
+
             for (int i = 0; i < characterManager.enemyList.Count; i++)
             {
                 inversionManager.registerInvertible((Invertible)characterManager.enemyList[i]);
@@ -150,6 +161,8 @@ namespace The_Negative_One
             //bosses.Clear();
             items.Clear();
             characterManager.unload();
+
+            bossMusicInstance.Stop();
         }
 
         /*
@@ -197,7 +210,7 @@ namespace The_Negative_One
             this.cameraStill = true;
         }
 
-        public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice)
+        public void Draw(SpriteBatch sb, GraphicsDevice graphicsDevice, InversionManager inv)
         {
             inversionManager.Draw(sb, graphicsDevice);
             if (door.isActive())
@@ -229,7 +242,7 @@ namespace The_Negative_One
                     blackObstacles[i].Draw(sb, cameraX);
                 }
             }
-            characterManager.Draw(sb, cameraX, cameraStill);
+            characterManager.Draw(sb, cameraX, cameraStill, inv);
         }
 
         public void MoveCamera(int movement)
@@ -290,6 +303,7 @@ namespace The_Negative_One
             if (characterManager.bossDead())
             {
                 door.setActive(true);
+                bossMusicInstance.Stop();
             }
 
             items.RemoveAll(i => !i.isAlive());
@@ -301,6 +315,11 @@ namespace The_Negative_One
             if (cameraX > bossCameraX)
             {
                 CameraStill();
+
+                if (!characterManager.bossDead())
+                {
+                    bossMusicInstance.Play();
+                }
             }
         }
     }

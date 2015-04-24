@@ -57,14 +57,17 @@ namespace The_Negative_One
                     MovementPattern mPattern;
                     List<double> xVList = new List<double>();
                     List<double> yVList = new List<double>();
+                    List<bool> shootList = new List<bool>();
 
                     while ((line = file.ReadLine()) != "endEnemy")
                     {
                         string line2 = file.ReadLine();
+                        string line3 = file.ReadLine();
                         xVList.Add(Convert.ToDouble(line));
                         yVList.Add(Convert.ToDouble(line2));
+                        shootList.Add(Convert.ToBoolean(line3));
                     }
-                    mPattern = new MovementPattern(xVList, yVList);
+                    mPattern = new MovementPattern(xVList, yVList, shootList);
 
                     Enemy newEnemy = new Enemy(x, y, width, height, normal, inverted, totalFrames, curHP, mPattern);
                     if (picture.Equals("butterfly_spritesheet"))
@@ -92,32 +95,38 @@ namespace The_Negative_One
                     String color = file.ReadLine();
                     Texture2D image = content.Load<Texture2D>(file.ReadLine());
                     Texture2D image_i = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D pImage = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D pImage_i = content.Load<Texture2D>(file.ReadLine());
                     int totalFrames = Convert.ToInt32(file.ReadLine());
                     int maxHP = Convert.ToInt32(file.ReadLine());
                     MovementPattern mPattern;
                     List<MovementPattern> mPList = new List<MovementPattern>();
                     List<double> xVList = new List<double>();
                     List<double> yVList = new List<double>();
+                    List<bool> shootList = new List<bool>();
 
                     while ((line = file.ReadLine()) != "endBoss")
                     {
                         if (line == "endPattern")
                         {
-                            mPattern = new MovementPattern(xVList, yVList);
+                            mPattern = new MovementPattern(xVList, yVList, shootList);
                             mPList.Add(mPattern);
                             xVList = new List<double>();
                             yVList = new List<double>();
+                            shootList = new List<bool>();
                         }
 
                         else
                         {
                             string line2 = file.ReadLine();
+                            string line3 = file.ReadLine();
                             xVList.Add(Convert.ToDouble(line));
                             yVList.Add(Convert.ToDouble(line2));
+                            shootList.Add(Convert.ToBoolean(line3));
                         }
 
                     }
-                    mPattern = new MovementPattern(xVList, yVList);
+                    mPattern = new MovementPattern(xVList, yVList, shootList);
                     bool invert = false;
                     bool neutral = false;
 
@@ -131,6 +140,7 @@ namespace The_Negative_One
                     }
 
                     Boss newBoss = new Boss(x, y, width, height, image, image_i, totalFrames, maxHP, mPList, player, invert, neutral, false);
+                    newBoss.setPTexture(pImage, pImage_i);
                     bossList.Add(newBoss);
                 }
 
@@ -224,12 +234,13 @@ namespace The_Negative_One
 
             if (player.Shoot(controls))
             {
-                double projectileXVel = 6;
+                double projectileXVel = 7;
                 int projectileX = player.getWidth();
                 int projectileY = 25;
                 if (!player.facingRight())
                 {
-                    projectileXVel = -6;
+                    projectileXVel = -7;
+
                     projectileX = -4;
                 }
                 projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 12, 6, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0, true));
@@ -237,7 +248,7 @@ namespace The_Negative_One
 
             foreach (Boss b in bossList)
             {
-                if (b.Shoot(gametime))
+                if (b.shoot)
                 {
                     double x = (b.getX() + b.getWidth()/2) - (player.getX() + player.getWidth()/2);
                     double y = (b.getY() + b.getHeight() / 2) - (player.getY() + player.getHeight() / 2);
@@ -247,9 +258,10 @@ namespace The_Negative_One
                     double projectileYVel = -8*y/d;
                     //int projectileX = player.getWidth() - 2;
                     //int projectileY = 18;
-
-                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - 16, b.getY() + b.getHeight()/2 - 16, 33, 33, content.Load<Texture2D>("Web projectile"), content.Load<Texture2D>("Web projectile_i"), projectileXVel, projectileYVel, false));
-
+                    int pWidth = b.pTexture.Width;
+                    int pHeight = b.pTexture.Height;
+                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - pWidth/2, b.getY() + b.getHeight()/2 - pHeight/2, b.pTexture.Width, b.pTexture.Height, b.pTexture, b.pTexture_i, projectileXVel, projectileYVel, false));
+                    b.shoot = false;
                 }
             }
             return retVal;
@@ -317,7 +329,7 @@ namespace The_Negative_One
             return (bossList.Count == 0);
         }
 
-        public void Draw(SpriteBatch spriteBatch, int cameraX, bool cameraStill)
+        public void Draw(SpriteBatch spriteBatch, int cameraX, bool cameraStill, InversionManager inv)
         {
             foreach (Enemy e in enemyList)
             {
@@ -327,7 +339,7 @@ namespace The_Negative_One
             {
                 foreach (Boss b in bossList)
                 {
-                    b.Draw(spriteBatch, cameraX);
+                    b.Draw(spriteBatch, cameraX, inv);
                 }
             }
             if (player.isAlive())
