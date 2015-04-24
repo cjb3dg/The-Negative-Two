@@ -161,6 +161,8 @@ namespace The_Negative_One
             //bosses.Clear();
             items.Clear();
             characterManager.unload();
+
+            bossMusicInstance.Stop();
         }
 
         /*
