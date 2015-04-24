@@ -55,7 +55,7 @@ namespace The_Negative_One
             levelManager = new LevelManager(inversionManager, characterManager, Content);
             Content.RootDirectory = "Content";
 
-            currentLevel = 2;
+            currentLevel = 0;
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
