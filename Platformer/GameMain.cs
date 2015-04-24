@@ -67,7 +67,7 @@ namespace The_Negative_One
                 new MenuItem("LEVEL 1", "LevelOne"),
                 new MenuItem("LEVEL 2", "LevelTwo"),
                 new MenuItem("BACK", "Back")
-            }, "levelMenu");
+            }, "LevelMenu");
             pauseMenu = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("RESUME", "GameScreen"),
                 new MenuItem("MAIN MENU", "Back"),
@@ -93,7 +93,7 @@ namespace The_Negative_One
         protected override void Initialize()
         {
             base.Initialize();
-            Joystick.Init();
+            //Joystick.Init();
             Console.WriteLine("Number of joysticks: " + Sdl.SDL_NumJoysticks());
             controls = new Controls();
         }

@@ -16,6 +16,7 @@ namespace The_Negative_One
         private MenuItem selectedItem;
         private int selectedIndex = 0;
         private float fontHeight = 20;
+        private Texture2D title;
 
         public MenuScreen(List<MenuItem> menuItems, string type)
         {
@@ -25,7 +26,7 @@ namespace The_Negative_One
 
             for (int i = 0; i < this.menuItems.Count; i++)
             {
-                menuItems[i].y = 100 + i * fontHeight;
+                menuItems[i].y = 300 + i * fontHeight;
                 menuItems[i].x = 100;
             }
 
@@ -35,6 +36,15 @@ namespace The_Negative_One
         public override void LoadContent(ContentManager contentManager)
         {
             font = contentManager.Load<SpriteFont>("MenuFont");
+
+            if (this.Type == "PauseMenu")
+            {
+                title = contentManager.Load<Texture2D>("title.png");
+            }
+            else
+            {
+                title = contentManager.Load<Texture2D>("title.png");
+            }
         }
 
         public override void Update(GameMain game, Controls controls) {
@@ -75,6 +85,8 @@ namespace The_Negative_One
         public override void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
             graphicsDevice.Clear(Color.Black);
+            spriteBatch.Draw(title, new Rectangle(85, 100, 1000, 75), Color.White);
+
             for (int i = 0; i < menuItems.Count; i++)
             {
                 menuItems[i].Draw(spriteBatch, font);
