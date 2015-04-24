@@ -371,7 +371,7 @@ namespace The_Negative_One
 
         public bool Shoot(Controls controls)
         {
-            if (controls.onPress(Keys.Enter, Buttons.RightTrigger) && cooldown == 0)
+            if (controls.onPress(Keys.S, Buttons.RightTrigger) && cooldown == 0)
             {
                 cooldown = 20;
                 return true;
