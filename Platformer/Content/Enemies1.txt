@@ -3,7 +3,7 @@
 587
 39
 40
-butterfly_spritesheet
+butterfly_gray_spritesheet
 butterfly_i_spritesheet
 3
 1
@@ -83,7 +83,7 @@ Enemy
 556
 39
 40
-butterfly_spritesheet
+butterfly_i_spritesheet
 butterfly_i_spritesheet
 3
 1
@@ -123,10 +123,10 @@ spiderBoss
 Web projectile
 Web projectile_i
 1
-10
+15
 2.0
 0.0
-false
+true
 2.0
 0.0
 false
@@ -142,7 +142,7 @@ false
 endPattern
 0.0
 2.0
-false
+true
 0.0
 2.0
 false
@@ -158,7 +158,7 @@ false
 endPattern
 -2.0
 0.0
-false
+true
 -2.0
 0.0
 false
@@ -174,7 +174,7 @@ false
 endPattern
 0.0
 -2.0
-false
+true
 0.0
 -2.0
 false

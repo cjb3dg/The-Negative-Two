@@ -272,7 +272,7 @@ namespace The_Negative_One
                 {
                     if (invulnerability <= 0)
                     {
-                        curHP -= 50;
+                        curHP -= 100;
                         invulnerability = 30;
 
                         hitSound.Play();
@@ -289,7 +289,7 @@ namespace The_Negative_One
                 {
                     if (curHP < maxHP && e.getType() == 0)
                     {
-                        curHP += 200;
+                        curHP += 300;
                         if (curHP > maxHP)
                         {
                             curHP = maxHP;
@@ -308,10 +308,10 @@ namespace The_Negative_One
             {
                 if (!(spriteX + spriteWidth < e.getX() || spriteX > e.getX() + e.getWidth() || spriteY + spriteHeight < e.getY() || spriteY > e.getY() + e.getHeight()))
                 {
-                    int healthDecrease = 50;
+                    int healthDecrease = 100;
                     if (!e.IsActive(inv))
                     {
-                        healthDecrease = 10;
+                        healthDecrease = 50;
                     }
                     if (invulnerability <= 0)
                     {
@@ -334,7 +334,7 @@ namespace The_Negative_One
                     {
                         if (invulnerability == 0)
                         {
-                            curHP -= 100;
+                            curHP -= 150;
                             invulnerability = 30;
 
                             hitSound.Play();

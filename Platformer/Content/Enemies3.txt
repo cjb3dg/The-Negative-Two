@@ -3,7 +3,7 @@
 500
 39
 40
-butterfly_spritesheet
+butterfly_gray_spritesheet
 butterfly_i_spritesheet
 3
 1

@@ -234,16 +234,16 @@ namespace The_Negative_One
 
             if (player.Shoot(controls))
             {
-                double projectileXVel = 7;
+                double projectileXVel = 8;
                 int projectileX = player.getWidth();
                 int projectileY = 25;
                 if (!player.facingRight())
                 {
-                    projectileXVel = -7;
+                    projectileXVel = -8;
 
                     projectileX = -4;
                 }
-                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 12, 6, content.Load<Texture2D>("Platform_grey"), content.Load<Texture2D>("Platform_grey"), projectileXVel, 0, true));
+                projectileList.Add(new Projectile(player.getX() + projectileX, player.getY() + projectileY, 12, 6, content.Load<Texture2D>("player_projectile"), content.Load<Texture2D>("player_projectile"), projectileXVel, 0, true));
             }
 
             foreach (Boss b in bossList)
@@ -251,7 +251,7 @@ namespace The_Negative_One
                 if (b.shoot)
                 {
                     double x = (b.getX() + b.getWidth()/2) - (player.getX() + player.getWidth()/2);
-                    double y = (b.getY() + b.getHeight() / 2) - (player.getY() + player.getHeight() / 2);
+                    double y = (b.getY() + b.getHeight() / 3) - (player.getY() + player.getHeight() / 2);
                     double d = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
 
                     double projectileXVel = -8*x/d;
@@ -260,7 +260,7 @@ namespace The_Negative_One
                     //int projectileY = 18;
                     int pWidth = b.pTexture.Width;
                     int pHeight = b.pTexture.Height;
-                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - pWidth/2, b.getY() + b.getHeight()/2 - pHeight/2, b.pTexture.Width, b.pTexture.Height, b.pTexture, b.pTexture_i, projectileXVel, projectileYVel, false));
+                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - pWidth/2, b.getY() + b.getHeight()/3 - pHeight/2, b.pTexture.Width, b.pTexture.Height, b.pTexture, b.pTexture_i, projectileXVel, projectileYVel, false));
                     b.shoot = false;
                 }
             }
@@ -307,18 +307,18 @@ namespace The_Negative_One
                     if (player.IsInverted == true)
                     {
                         int x = b.maxHP;
-                        spriteBatch.Draw(temp2, new Rectangle(957, 9 + yOffset, (x * 30) + 6, 17), Color.White);
-                        spriteBatch.Draw(temp2, new Rectangle(959, 7 + yOffset, (x * 30) + 2, 21), Color.White);
-                        spriteBatch.Draw(temp3, new Rectangle(959, 9 + yOffset, (x * 30) + 2, 17), Color.Black);
-                        spriteBatch.Draw(temp2, new Rectangle(960, 10 + yOffset, b.curHP * 30, 15), Color.White);
+                        spriteBatch.Draw(temp2, new Rectangle(1263 - (x*15) - 6, 9 + yOffset, (x * 15) + 6, 17), Color.White);
+                        spriteBatch.Draw(temp2, new Rectangle(1261 - (x * 15) - 2, 7 + yOffset, (x * 15) + 2, 21), Color.White);
+                        spriteBatch.Draw(temp3, new Rectangle(1261 - (x * 15) - 2, 9 + yOffset, (x * 15) + 2, 17), Color.Black);
+                        spriteBatch.Draw(temp2, new Rectangle(1260 - (x * 15), 10 + yOffset, b.curHP * 15, 15), Color.White);
                     }
                     else
                     {
                         int x = b.maxHP;
-                        spriteBatch.Draw(temp3, new Rectangle(957, 9 + yOffset, (x * 30) + 6, 17), Color.Black);
-                        spriteBatch.Draw(temp3, new Rectangle(959, 7 + yOffset, (x * 30) + 2, 21), Color.Black);
-                        spriteBatch.Draw(temp2, new Rectangle(959, 9 + yOffset, (x * 30) + 2, 17), Color.White);
-                        spriteBatch.Draw(temp3, new Rectangle(960, 10 + yOffset, b.curHP * 30, 15), Color.Black);
+                        spriteBatch.Draw(temp3, new Rectangle(1263 - (x * 15) - 6, 9 + yOffset, (x * 15) + 6, 17), Color.Black);
+                        spriteBatch.Draw(temp3, new Rectangle(1261 - (x * 15) - 2, 7 + yOffset, (x * 15) + 2, 21), Color.Black);
+                        spriteBatch.Draw(temp2, new Rectangle(1261 - (x * 15) - 2, 9 + yOffset, (x * 15) + 2, 17), Color.White);
+                        spriteBatch.Draw(temp3, new Rectangle(1260 - (x * 15), 10 + yOffset, b.curHP * 15, 15), Color.Black);
                     }
                 }
             }
