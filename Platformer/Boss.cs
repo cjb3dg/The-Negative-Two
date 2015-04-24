@@ -19,6 +19,8 @@ namespace The_Negative_One
         public int mLIter = 0; //Iterator for mPList
         private bool alive;
 
+        private bool IsRight;
+
         public Texture2D pTexture;
         public Texture2D pTexture_i;
 
@@ -139,9 +141,16 @@ namespace The_Negative_One
                 //Create Projectile here
                 remPDelay = projDelay;
             }
+
+            IsRight = this.xVel >= 0;
+
             this.UpdateAnimation(gameTime, true, true);
         }
 
+        public override void Draw(SpriteBatch sb, int cameraX)
+        {
+            DrawAnimation(sb, IsInverted, spriteX - cameraX, spriteY, !IsRight);
+        }
 /*        public void spawnSpider(List<Enemy> eList, ContentManager content)
         {
             List<double> xVList = new List<double>();
