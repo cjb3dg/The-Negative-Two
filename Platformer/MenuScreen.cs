@@ -37,14 +37,14 @@ namespace The_Negative_One
 
             if (type == "WinMenu" || type == "Credits")
             {
-                menuItems[0].y = 700;
-                menuItems[0].x = 800;
+                menuItems[0].y = 625;
+                menuItems[0].x = 825;
             }
             else
             {
                 for (int i = 0; i < this.menuItems.Count; i++)
                 {
-                    menuItems[i].y = 300 + i * fontHeight;
+                    menuItems[i].y = 300 + i * fontHeight+5;
                     menuItems[i].x = 100;
                 }
             }
