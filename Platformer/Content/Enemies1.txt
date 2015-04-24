@@ -3,8 +3,9 @@
 587
 39
 40
-butterfly
-butterfly_i
+butterfly_spritesheet
+butterfly_i_spritesheet
+3
 1
 -2
 0
@@ -36,8 +37,9 @@ Enemy
 645
 39
 40
-butterfly
-butterfly_i
+butterfly_spritesheet
+butterfly_i_spritesheet
+3
 1
 0
 3
@@ -61,8 +63,9 @@ Enemy
 556
 39
 40
-butterfly
-butterfly_i
+butterfly_spritesheet
+butterfly_i_spritesheet
+3
 1
 0
 -3
@@ -89,6 +92,7 @@ Boss
 w
 spiderBoss
 spiderBoss
+1
 10
 2.0
 0.0

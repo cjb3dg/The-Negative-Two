@@ -28,6 +28,7 @@ namespace The_Negative_One
 
         private Screen currentMenuScreen;
         private MenuScreen mainMenuScreen;
+        private MenuScreen levelMenuScreen;
         private MenuScreen pauseMenu;
         private MenuScreen victoryMenu;
         private MenuScreen deathMenu;
@@ -58,10 +59,19 @@ namespace The_Negative_One
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("START GAME", "GameScreen"),
+                new MenuItem("LEVEL SELECT", "LevelSelect"),
                 new MenuItem("EXIT", "Exit")
             }, "MainMenu");
+            levelMenuScreen = new MenuScreen(new List<MenuItem>
+            {
+                new MenuItem("TUTORIAL", "Tutorial"),
+                new MenuItem("LEVEL 1", "LevelOne"),
+                new MenuItem("LEVEL 2", "LevelTwo"),
+                new MenuItem("BACK", "Back")
+            }, "levelMenu");
             pauseMenu = new MenuScreen(new List<MenuItem> { 
                 new MenuItem("RESUME", "GameScreen"),
+                new MenuItem("MAIN MENU", "Back"),
                 new MenuItem("EXIT", "Exit")
             }, "PauseMenu");
             victoryMenu = new MenuScreen(new List<MenuItem> { 
@@ -88,10 +98,10 @@ namespace The_Negative_One
             Console.WriteLine("Number of joysticks: " + Sdl.SDL_NumJoysticks());
             controls = new Controls();
 
-            Type type = typeof(OpenTKGameWindow);
-            System.Reflection.FieldInfo field = type.GetField("window", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            OpenTK.GameWindow window = (OpenTK.GameWindow)field.GetValue(this.Window);
-            this.Window.SetPosition(new Point(0,0));
+            //Type type = typeof(OpenTKGameWindow);
+            //System.Reflection.FieldInfo field = type.GetField("window", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            //OpenTK.GameWindow window = (OpenTK.GameWindow)field.GetValue(this.Window);
+            //this.Window.SetPosition(new Point(0,0));
         }
 
         /// <summary>
@@ -115,6 +125,7 @@ namespace The_Negative_One
             backSong_i.Volume = 0;
 
             mainMenuScreen.LoadContent(Content);
+            levelMenuScreen.LoadContent(Content);
             pauseMenu.LoadContent(Content);
             victoryMenu.LoadContent(Content);
             deathMenu.LoadContent(Content);
@@ -162,7 +173,7 @@ namespace The_Negative_One
                 {
                     levelManager.Update(controls, gameTime);
 
-                    if (controls.onPress(Keys.Space, Buttons.A))
+                    if (controls.onPress(Keys.Space, Buttons.LeftTrigger))
                     {
                         float x = backSong_i.Volume;
                         backSong_i.Volume = backSong.Volume;
@@ -171,7 +182,7 @@ namespace The_Negative_One
 
                     base.Update(gameTime);
                 }
-            } else {
+             } else {
                 currentMenuScreen.Update(this, controls);
             }
         }
@@ -201,6 +212,33 @@ namespace The_Negative_One
             if (targetScreen == "GameScreen")
             {
                 IsGameRunning = true;
+            }
+            else if (targetScreen == "LevelSelect")
+            {
+                currentMenuScreen = levelMenuScreen;
+                IsGameRunning = false;
+            }
+            else if (targetScreen == "Tutorial")
+            {
+                levelManager.unload();
+                currentLevel = 0;
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
+                levelManager.load(currentLevel, true);
+                IsGameRunning = true;
+            }
+            else if (targetScreen == "LevelOne")
+            {
+                levelManager.unload();
+                currentLevel = 1;
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
+                levelManager.load(currentLevel, true);
+                IsGameRunning = true;
+            }
+            else if (targetScreen == "Back")
+            {
+                currentMenuScreen = mainMenuScreen;
             }
             else if (targetScreen == mainMenuScreen.Type)
             {

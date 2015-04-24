@@ -47,10 +47,12 @@ namespace The_Negative_One
                     int y = Convert.ToInt32(file.ReadLine());
                     int width = Convert.ToInt32(file.ReadLine());
                     int height = Convert.ToInt32(file.ReadLine());
+
                     string picture = file.ReadLine();
                     string picture2 = file.ReadLine();
                     Texture2D normal = content.Load<Texture2D>(picture);
                     Texture2D inverted = content.Load<Texture2D>(picture);
+                    int totalFrames = Convert.ToInt32(file.ReadLine());
                     int curHP = Convert.ToInt32(file.ReadLine());
                     MovementPattern mPattern;
                     List<double> xVList = new List<double>();
@@ -64,12 +66,12 @@ namespace The_Negative_One
                     }
                     mPattern = new MovementPattern(xVList, yVList);
 
-                    Enemy newEnemy = new Enemy(x, y, width, height, normal, inverted, curHP, mPattern);
-                    if (picture.Equals("butterfly"))
+                    Enemy newEnemy = new Enemy(x, y, width, height, normal, inverted, totalFrames, curHP, mPattern);
+                    if (picture.Equals("butterfly_spritesheet"))
                     {
                         newEnemy.IsInverted = true;
                     }
-                    else if (picture.Equals("butterfly_i"))
+                    else if (picture.Equals("butterfly_i_spritesheet"))
                     {
                         newEnemy.IsInverted = false;
                     }
@@ -88,8 +90,9 @@ namespace The_Negative_One
                     int width = Convert.ToInt32(file.ReadLine());
                     int height = Convert.ToInt32(file.ReadLine());
                     String color = file.ReadLine();
-                    Texture2D normal = content.Load<Texture2D>(file.ReadLine());
-                    Texture2D inverted = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D image = content.Load<Texture2D>(file.ReadLine());
+                    Texture2D image_i = content.Load<Texture2D>(file.ReadLine());
+                    int totalFrames = Convert.ToInt32(file.ReadLine());
                     int maxHP = Convert.ToInt32(file.ReadLine());
                     MovementPattern mPattern;
                     List<MovementPattern> mPList = new List<MovementPattern>();
@@ -127,7 +130,7 @@ namespace The_Negative_One
                         neutral = true;
                     }
 
-                    Boss newBoss = new Boss(x, y, width, height, normal, inverted, maxHP, mPList, player, invert, neutral, false);
+                    Boss newBoss = new Boss(x, y, width, height, image, image_i, totalFrames, maxHP, mPList, player, invert, neutral, false);
                     bossList.Add(newBoss);
                 }
 
@@ -236,16 +239,16 @@ namespace The_Negative_One
             {
                 if (b.Shoot(gametime))
                 {
-                    double x = b.getX() - player.getX();
-                    double y = b.getY() - player.getY();
+                    double x = (b.getX() + b.getWidth()/2) - (player.getX() + player.getWidth()/2);
+                    double y = (b.getY() + b.getHeight() / 2) - (player.getY() + player.getHeight() / 2);
                     double d = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
 
-                    double projectileXVel = -4*x/d;
-                    double projectileYVel = -4*y/d;
-                    int projectileX = player.getWidth() - 2;
-                    int projectileY = 18;
+                    double projectileXVel = -8*x/d;
+                    double projectileYVel = -8*y/d;
+                    //int projectileX = player.getWidth() - 2;
+                    //int projectileY = 18;
 
-                    projectileList.Add(new Projectile(b.getX() + projectileX, b.getY() + projectileY, 44, 44, content.Load<Texture2D>("Web projectile"), content.Load<Texture2D>("Web projectile_i"), projectileXVel, projectileYVel, false));
+                    projectileList.Add(new Projectile(b.getX() + b.getWidth()/2 - 16, b.getY() + b.getHeight()/2 - 16, 33, 33, content.Load<Texture2D>("Web projectile"), content.Load<Texture2D>("Web projectile_i"), projectileXVel, projectileYVel, false));
 
                 }
             }
@@ -284,23 +287,26 @@ namespace The_Negative_One
                 Texture2D temp = content.Load<Texture2D>("Platform_grey");
                 Texture2D temp2 = content.Load<Texture2D>("Platform_white");
                 Texture2D temp3 = content.Load<Texture2D>("Platform_black");
-                foreach (Boss b in bList)
+                for (int i = 0; i < bList.Count; i++)
                 {
+                    int yOffset = 30 * i;
+                    Boss b = new Boss();
+                    b = bList[i];
                     if (player.IsInverted == true)
                     {
                         int x = b.maxHP;
-                        spriteBatch.Draw(temp2, new Rectangle(957, 9, (x * 30) + 6, 17), Color.White);
-                        spriteBatch.Draw(temp2, new Rectangle(959, 7, (x * 30) + 2, 21), Color.White);
-                        spriteBatch.Draw(temp3, new Rectangle(959, 9, (x * 30) + 2, 17), Color.Black);
-                        spriteBatch.Draw(temp2, new Rectangle(960, 10, b.curHP * 30, 15), Color.White);
+                        spriteBatch.Draw(temp2, new Rectangle(957, 9 + yOffset, (x * 30) + 6, 17), Color.White);
+                        spriteBatch.Draw(temp2, new Rectangle(959, 7 + yOffset, (x * 30) + 2, 21), Color.White);
+                        spriteBatch.Draw(temp3, new Rectangle(959, 9 + yOffset, (x * 30) + 2, 17), Color.Black);
+                        spriteBatch.Draw(temp2, new Rectangle(960, 10 + yOffset, b.curHP * 30, 15), Color.White);
                     }
                     else
                     {
                         int x = b.maxHP;
-                        spriteBatch.Draw(temp3, new Rectangle(957, 9, (x * 30) + 6, 17), Color.Black);
-                        spriteBatch.Draw(temp3, new Rectangle(959, 7, (x * 30) + 2, 21), Color.Black);
-                        spriteBatch.Draw(temp2, new Rectangle(959, 9, (x * 30) + 2, 17), Color.White);
-                        spriteBatch.Draw(temp3, new Rectangle(960, 10, b.curHP * 30, 15), Color.Black);
+                        spriteBatch.Draw(temp3, new Rectangle(957, 9 + yOffset, (x * 30) + 6, 17), Color.Black);
+                        spriteBatch.Draw(temp3, new Rectangle(959, 7 + yOffset, (x * 30) + 2, 21), Color.Black);
+                        spriteBatch.Draw(temp2, new Rectangle(959, 9 + yOffset, (x * 30) + 2, 17), Color.White);
+                        spriteBatch.Draw(temp3, new Rectangle(960, 10 + yOffset, b.curHP * 30, 15), Color.Black);
                     }
                 }
             }
@@ -335,12 +341,6 @@ namespace The_Negative_One
 
             DrawHPAndEnergy(spriteBatch);
             DrawBossHP(spriteBatch, bossList, cameraStill);
-
-/*            if (player.victory == true)
-            {
-                spriteBatch.Draw(content.Load<Texture2D>("Victory"), new Rectangle(50, 50, 700, 400), Color.White);
-            }
- */
         }
 
     }
