@@ -32,6 +32,8 @@ namespace The_Negative_One
         private MenuScreen pauseMenu;
         private MenuScreen victoryMenu;
         private MenuScreen deathMenu;
+        private MenuScreen winMenu;
+        private MenuScreen credits;
 
         private bool IsGameRunning = false;
         private int currentLevel;
@@ -58,7 +60,7 @@ namespace The_Negative_One
             currentLevel = 0;
 
             mainMenuScreen = new MenuScreen(new List<MenuItem> { 
-                new MenuItem("START GAME", "GameScreen"),
+                new MenuItem("START GAME", "Tutorial"),
                 new MenuItem("LEVEL SELECT", "LevelSelect"),
                 new MenuItem("EXIT", "Exit")
             }, "MainMenu");
@@ -79,9 +81,18 @@ namespace The_Negative_One
                 new MenuItem("EXIT", "Exit")
             }, "VictoryMenu");
             deathMenu = new MenuScreen(new List<MenuItem> {
+                new MenuItem("MAIN MENU", "Back"),
                 new MenuItem("RESTART LEVEL", "SameLevelScreen"),
                 new MenuItem("EXIT", "Exit")
             }, "DeathMenu");
+            winMenu = new MenuScreen(new List<MenuItem> {
+                new MenuItem("NEXT", "Credits"),
+            }, "WinMenu");
+
+            credits = new MenuScreen(new List<MenuItem> {
+                new MenuItem("MAIN MENU", "Back"),
+            }, "Credits");
+
             currentMenuScreen = mainMenuScreen;
         }
 
@@ -94,7 +105,7 @@ namespace The_Negative_One
         protected override void Initialize()
         {
             base.Initialize();
-            //Joystick.Init();
+            Joystick.Init();
             Console.WriteLine("Number of joysticks: " + Sdl.SDL_NumJoysticks());
             controls = new Controls();
 
@@ -129,6 +140,7 @@ namespace The_Negative_One
             pauseMenu.LoadContent(Content);
             victoryMenu.LoadContent(Content);
             deathMenu.LoadContent(Content);
+            winMenu.LoadContent(Content);
 
             levelManager.load(currentLevel, true);
         }
@@ -248,6 +260,7 @@ namespace The_Negative_One
             else if (targetScreen == "Back")
             {
                 currentMenuScreen = mainMenuScreen;
+                IsGameRunning = false;
             }
             else if (targetScreen == mainMenuScreen.Type)
             {
@@ -279,14 +292,26 @@ namespace The_Negative_One
             }
             else if (targetScreen == "NextLevelScreen")
             {
-                levelManager.unload();
-                currentLevel++;
-                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
-                backSong_i.Volume = 0;
-                levelManager.load(currentLevel, true);
-                IsGameRunning = true;
+                if (currentLevel == 0)
+                {
+                    currentMenuScreen = winMenu;
+                    IsGameRunning = false;
+                }
+                else
+                {
+                    levelManager.unload();
+                    currentLevel++;
+                    backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                    backSong_i.Volume = 0;
+                    levelManager.load(currentLevel, true);
+                    IsGameRunning = true;
+                }
             }
-            else if (targetScreen == "Exit") // TODO: next level stuff
+            else if (targetScreen == "Credits")
+            {
+                currentMenuScreen = credits;
+            }
+            else if (targetScreen == "Exit")
             {
                 Exit();
             }
