@@ -185,7 +185,7 @@ namespace The_Negative_One
 
             if (IsGameRunning)
             {
-                levelManager.Draw(spriteBatch, GraphicsDevice);
+                levelManager.Draw(spriteBatch, GraphicsDevice, inversionManager);
             } else {
                 currentMenuScreen.Draw(spriteBatch, GraphicsDevice);
             }
