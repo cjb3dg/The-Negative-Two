@@ -196,6 +196,11 @@ namespace The_Negative_One
             if (IsGameRunning)
             {
                 levelManager.Draw(spriteBatch, GraphicsDevice, inversionManager);
+                if (currentLevel == 0)
+                {
+                    spriteBatch.DrawString(Content.Load<SpriteFont>("MenuFont"), "Keyboard: Arrow keys to move, S to shoot, Space to invert.", new Vector2(130, 5), Color.Gray);
+                    spriteBatch.DrawString(Content.Load<SpriteFont>("MenuFont"), "Controller: Left stick to move, A to jump, RT to shoot, LT to invert.", new Vector2(130, 35), Color.Gray);
+                }
             } else {
                 currentMenuScreen.Draw(spriteBatch, GraphicsDevice);
             }
