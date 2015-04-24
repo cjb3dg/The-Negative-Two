@@ -236,6 +236,15 @@ namespace The_Negative_One
                 levelManager.load(currentLevel, true);
                 IsGameRunning = true;
             }
+            else if (targetScreen == "LevelTwo")
+            {
+                levelManager.unload();
+                currentLevel = 2;
+                backSong.Volume = Math.Max(backSong.Volume, backSong_i.Volume);
+                backSong_i.Volume = 0;
+                levelManager.load(currentLevel);
+                IsGameRunning = true;
+            }
             else if (targetScreen == "Back")
             {
                 currentMenuScreen = mainMenuScreen;
